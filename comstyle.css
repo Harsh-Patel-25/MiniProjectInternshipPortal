@@ -1,0 +1,234 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+  background: #f9fafb;
+  color: #fff;
+}
+
+/* ---------- HEADER ---------- */
+header {
+  background: #ffffff;
+  padding: 14px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: rgb(26, 51, 102);
+  font-size: 20px;
+}
+#intern {
+  color: rgb(26, 51, 102);
+}
+#hub {
+  color: #f97316;
+}
+.logo img {
+  height: 45px;
+}
+
+.logo span {
+  color: #2563eb;
+}
+
+nav a {
+  margin: 0 18px;
+  text-decoration: none;
+  color: #475569;
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: #2563eb;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+}
+.nav-actions div {
+  display: flex;
+  gap: 20px;
+}
+.nav-actions div :first-child {
+  color: rgb(26, 51, 102);
+  font-weight: 500;
+}
+.nav-actions div a {
+  text-decoration: none;
+  color: #626d84;
+}
+.nav-actions button {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  
+}
+
+.signin {
+  background: transparent;
+  color: #475569;
+  margin-right: 10px;
+}
+
+.get-started {
+  background-image: linear-gradient(
+    135deg,
+    rgb(26, 51, 102) 0%,
+    rgb(31, 109, 147) 100%
+  );
+  color: white;
+}
+.internship-hero {
+  background-image: linear-gradient(160deg, rgb(26, 51, 102) 0%, rgb(36, 143, 134) 50%, rgb(40, 140, 189) 100%);
+  padding: 120px 0 90px;
+  text-align: center;
+  color: #fff;
+}
+
+.internship-hero h1 {
+  font-size: 52px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.internship-hero p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+/* Search box below hero banner */
+.company-search-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;  /* gap below banner */
+  padding-bottom: 300px;
+}
+
+.company-search-box {
+  width: 600px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  padding: 0 20px;
+
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.company-search-box i {
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.company-search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: #111827;
+  background: transparent;
+}
+
+.company-search-box input::placeholder {
+  color: #6b7280;
+}
+.footer-bottom {
+  margin-top: 50px;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 14px;
+  color: #94a3b8;
+}
+.footer {
+  background: #1e3a6d;
+  color: #cbd5e1;
+  padding: 70px 20px 0;
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.footer-logo img {
+  width: 36px;
+  height: 36px;
+}
+
+.footer-logo h3 {
+  color: #fff;
+  font-size: 22px;
+}
+
+.footer-col h4 {
+  color: #fff;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.footer-col p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.footer-col ul li a {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-col ul li a:hover {
+  color: #38bdf8;
+}
+
+.contact-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contact-list i {
+  color: #38bdf8;
+}   
