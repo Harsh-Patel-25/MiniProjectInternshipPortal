@@ -2,13 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    Roboto,
-    Arial,
-    sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 body {
@@ -116,6 +110,12 @@ label {
   margin-top: 8px;
 }
 
+/* Hide radio inputs */
+.role-buttons input[type="radio"] {
+  display: none;
+}
+
+/* Labels look like buttons */
 .role-btn {
   flex: 1;
   height: 55px;
@@ -130,32 +130,30 @@ label {
   color: #111827;
   cursor: pointer;
   font-size: 15px;
-}
-.role-buttons input {
-  display: none;
+  transition: 0.25s ease;
 }
 
+/* icon normal */
 .role-btn i {
   color: #6b7280;
+  transition: 0.25s ease;
 }
 
+/* Hover */
 .role-btn:hover {
   border-color: #0f3b7a;
 }
 
-.role-buttons input:checked + .role-btn{
+/* ✅ ACTIVE (checked) */
+.role-buttons input:checked + label.role-btn {
   border: 2px solid #0f2d5f;
   background: #f5f8ff;
-}
-
-.role-buttons input:checked + .role-btn i{
   color: #0f2d5f;
 }
 
-/* active style like Student selected */
-.student {
-  border: 2px solid #0f2d5f;
-  background: #f5f8ff;
+/* ✅ Active icon color */
+.role-buttons input:checked + label.role-btn i {
+  color: #0f2d5f;
 }
 
 /* SUBMIT BUTTON */

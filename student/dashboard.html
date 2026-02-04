@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InternHub Dashboard</title>
+    <link rel="stylesheet" href="dashstyle.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- ✅ HEADER (YOUR CODE) -->
+    <header>
+        <div class="logo">
+            <span id="intern">Intern</span><span id="hub">Hub</span>
+        </div>
+        <div class="nav-actions">
+            <div>
+                <a href="stubrowseinternship.html">Browse Internships</a>
+                <a href="companies.html">Companies</a>
+                <a class="dashboard">Dashboard</a>
+                <a class="navProfile">Profile</a>
+            </div>
+            <button class="signoutbtn" ><i class="fa-solid fa-arrow-right-from-bracket"
+                    style="padding-right: 5px;"></i>Sign out</button>
+        </div>
+    </header>
+
+    <!-- ✅ MAIN DASHBOARD -->
+    <div class="container">
+
+        <!-- Header Text -->
+        <div class="page-title">
+            <h1>Welcome back! <span class="wave">👋</span></h1>
+            <p>Track your applications and find new opportunities</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fa-regular fa-file"></i></div>
+                <div class="stat-info">
+                    <h2>0</h2>
+                    <p>Applications</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fa-regular fa-clock" style="color: orange;"></i></div>
+                <div class="stat-info">
+                    <h2>0</h2>
+                    <p>Pending</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fa-regular fa-circle-check" style="color: green;"></i></div>
+                <div class="stat-info">
+                    <h2>0</h2>
+                    <p>Accepted</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="fa-regular fa-circle-xmark" style="color: red;"></i></div>
+                <div class="stat-info">
+                    <h2>0</h2>
+                    <p>Rejected</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="main-grid">
+
+            <!-- Left Applications -->
+            <div class="card big-card">
+                <div class="card-header">
+                    <h2>Your Applications</h2>
+                    <button class="btn-outline"><i class="fa-solid fa-magnifying-glass"
+                            style="padding-right: 10px;"></i> Find More</button>
+                </div>
+
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fa-solid fa-suitcase" style="color: lightsteelblue;"></i></div>
+                    <h3>No applications yet</h3>
+                    <p>Start applying to internships to see them here</p>
+                    <button class="btn-primary">Browse Internships</button>
+                </div>
+            </div>
+
+            <!-- Right Side -->
+            <div class="right-side">
+
+                <!-- Profile -->
+                <div class="card">
+                    <h2>Your Profile</h2>
+
+                    <div class="profile-list">
+                        <div class="profile-item">
+                            <span class="circle-icon"><i class="fa-solid fa-user"></i></span>
+                            <p>Education details</p>
+                        </div>
+
+                        <div class="profile-item">
+                            <span class="circle-icon"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                            <p>Skills added</p>
+                        </div>
+
+                        <div class="profile-item">
+                            <span class="circle-icon"><i class="fa-regular fa-file"></i></span>
+                            <p>Bio written</p>
+                        </div>
+                    </div>
+
+                    <button class="btn-outline full-width">Complete Profile →</button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3>Quick Actions</h3>
+
+                    <div class="quick-actions">
+                        <div class="quick-action">
+                            <i class="fa-solid fa-magnifying-glass"></i> <span>Browse Internships</span>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="quick-action">
+                            <i class="fa-solid fa-suitcase"></i> <span>View Companies</span>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="quick-action">
+                            <i class="fa-regular fa-user"></i> <span>Edit Profile</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
