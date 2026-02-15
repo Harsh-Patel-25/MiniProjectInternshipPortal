@@ -1,0 +1,81 @@
+.internship-card {
+  background: white; border-radius: var(--radius-lg);
+  border: 2px solid var(--border); padding: 24px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px;
+}
+.internship-card:hover {
+  border-color: rgba(91,79,233,0.3); box-shadow: 0 8px 32px rgba(91,79,233,0.12);
+  transform: translateY(-2px);
+}
+.internship-card.featured { border-color: rgba(91,79,233,0.25); background: linear-gradient(180deg, rgba(91,79,233,0.02), white); }
+.internship-card.expired { opacity: 0.6; }
+
+.featured-badge, .urgent-badge {
+  position: absolute; top: 16px; right: 16px;
+  padding: 4px 10px; border-radius: 50px; font-size: 12px; font-weight: 600;
+}
+.featured-badge { background: var(--primary-light); color: var(--primary); }
+.urgent-badge { background: #FFF7ED; color: var(--secondary); }
+
+/* Icon colors for badges and buttons */
+.featured-badge i, .urgent-badge i { color: currentColor; margin-right: 6px; }
+.save-btn i { color: var(--gray); }
+.save-btn.saved i { color: var(--primary); }
+
+/* Ensure detail label icons follow label color */
+.detail-label i { color: var(--gray-light); margin-right: 6px; }
+
+.card-header { display: flex; align-items: flex-start; gap: 14px; }
+.company-logo-wrap { flex-shrink: 0; }
+.company-logo { width: 48px; height: 48px; border-radius: 12px; object-fit: contain; border: 1px solid var(--border); padding: 4px; }
+.company-initial {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary-light), #DDD6FE);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 20px; color: var(--primary);
+  font-family: 'Sora', sans-serif;
+}
+.card-meta { flex: 1; min-width: 0; }
+.card-title { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
+.card-title a { text-decoration: none; color: var(--dark); transition: color 0.2s; }
+.card-title a:hover { color: var(--primary); }
+.company-name { font-size: 14px; color: var(--gray); font-weight: 500; }
+
+.save-btn {
+  background: none; border: none; cursor: pointer; font-size: 18px;
+  opacity: 0.4; transition: all 0.2s; position: relative; padding: 4px;
+}
+.save-btn:hover { opacity: 1; transform: scale(1.1); }
+.save-btn.saved { opacity: 1; }
+.save-tooltip {
+  position: absolute; bottom: calc(100% + 4px); right: 0;
+  background: var(--dark); color: white; font-size: 11px;
+  padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.save-btn:hover .save-tooltip { opacity: 1; }
+
+.card-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.card-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.detail-item { display: flex; flex-direction: column; gap: 2px; }
+.detail-label { font-size: 12px; color: var(--gray-light); font-weight: 500; }
+.detail-value { font-size: 14px; font-weight: 600; color: var(--dark-2); }
+.detail-value.stipend { color: var(--success); }
+.text-error { color: var(--error) !important; }
+.text-warning { color: var(--warning) !important; }
+
+.card-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+.skill-tag {
+  background: var(--bg); border: 1px solid var(--border);
+  color: var(--dark-3); padding: 3px 10px; border-radius: 50px;
+  font-size: 12px; font-weight: 500;
+}
+.skill-more { background: var(--primary-light); color: var(--primary); padding: 3px 10px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto;
+}
+.posted-time { font-size: 13px; color: var(--gray); }

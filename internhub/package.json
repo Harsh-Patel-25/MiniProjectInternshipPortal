@@ -1,0 +1,20 @@
+{
+  "name": "internhub",
+  "version": "1.0.0",
+  "description": "InternHub - Full Stack Internship Platform",
+  "scripts": {
+    "install-all": "npm install --prefix backend && npm install --prefix frontend",
+    "backend": "npm start --prefix backend",
+    "frontend": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "seed": "node backend/seed.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.4",
+    "mongoose": "^9.2.1"
+  }
+}

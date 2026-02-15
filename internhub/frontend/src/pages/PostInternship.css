@@ -1,0 +1,19 @@
+/* PostInternship.css */
+.post-page { background: var(--bg); min-height: 100vh; }
+.post-container { padding: 40px 24px; max-width: 860px; }
+.post-form { display: flex; flex-direction: column; gap: 28px; }
+.form-section { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; }
+.form-section h2 { font-size: 18px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+.form-section h2 span { width: 28px; height: 28px; background: var(--primary); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.form-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+.list-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.list-input-row input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 14px; }
+.list-input-row input:focus { border-color: var(--primary); outline: none; }
+.remove-btn { width: 36px; height: 40px; border: 1.5px solid #FECACA; background: #FEF2F2; color: var(--error); border-radius: var(--radius); font-size: 18px; cursor: pointer; flex-shrink: 0; }
+.add-item-btn { background: none; border: 1.5px dashed var(--border); border-radius: var(--radius); color: var(--primary); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 10px 16px; cursor: pointer; transition: all 0.2s; width: 100%; }
+.add-item-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+
+.form-actions { display: flex; gap: 16px; justify-content: flex-end; padding-top: 8px; }
+
+@media (max-width: 768px) { .form-grid-2 { grid-template-columns: 1fr; } }

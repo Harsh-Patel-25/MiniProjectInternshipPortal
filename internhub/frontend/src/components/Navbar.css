@@ -1,0 +1,132 @@
+.navbar {
+  position: sticky; top: 0; z-index: 1000;
+  background: rgba(248, 250, 252, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+.navbar.scrolled {
+  border-bottom-color: var(--border);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+.nav-inner {
+  display: flex; align-items: center; gap: 32px;
+  height: 68px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 600;
+  text-decoration: none; color: var(--dark); flex-shrink: 0;
+}
+.nav-logo strong { color: var(--primary); }
+.logo-icon { font-size: 24px; }
+
+/* Logo color */
+.nav-logo .logo-icon { color: var(--primary); }
+
+/* Role icons and small badges inherit role color */
+.role-chip i { font-size: 16px; margin-right: 6px; vertical-align: middle; }
+.role-badge-sm i { margin-right: 6px; color: currentColor; }
+
+/* Dropdown icons */
+.user-dropdown a i, .user-dropdown .logout-btn i { color: var(--dark-3); }
+.user-dropdown a:hover i, .user-dropdown .logout-btn:hover i { color: var(--primary); }
+
+.nav-links {
+  display: flex; align-items: center; gap: 4px; flex: 1;
+}
+.nav-links a {
+  text-decoration: none; color: var(--gray);
+  font-size: 15px; font-weight: 500;
+  padding: 8px 14px; border-radius: 10px;
+  transition: all 0.2s ease;
+}
+.nav-links a:hover { color: var(--primary); background: var(--primary-light); }
+.nav-links a.active { color: var(--primary); background: var(--primary-light); font-weight: 600; }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+
+.auth-btns { display: flex; align-items: center; gap: 10px; }
+
+.user-menu {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; position: relative; padding: 6px 14px;
+  border-radius: var(--radius); transition: all 0.2s;
+}
+.user-menu:hover { background: var(--primary-light); }
+.user-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: 15px; overflow: hidden;
+  border: 2px solid white; box-shadow: 0 2px 8px rgba(91,79,233,0.2);
+}
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-name { font-weight: 600; font-size: 15px; color: var(--dark); }
+
+.user-dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 8px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+  min-width: 220px; z-index: 1001;
+  animation: dropIn 0.2s ease;
+}
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dropdown-header {
+  padding: 12px 14px; border-bottom: 1px solid var(--border); margin-bottom: 6px;
+}
+.dropdown-header strong { display: block; font-size: 15px; color: var(--dark); }
+.dropdown-header small { color: var(--gray); font-size: 13px; }
+.user-dropdown a, .user-dropdown .logout-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 10px;
+  text-decoration: none; color: var(--dark-3);
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: all 0.2s; width: 100%; text-align: left;
+  border: none; background: none; font-family: inherit;
+}
+.user-dropdown a:hover, .user-dropdown .logout-btn:hover { background: var(--bg); color: var(--primary); }
+.logout-btn { color: var(--error) !important; margin-top: 4px; border-top: 1px solid var(--border); }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 8px;
+}
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--dark); border-radius: 2px; transition: all 0.3s; }
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; position: fixed; top: 68px; left: 0; right: 0;
+    background: var(--white); padding: 16px;
+    border-bottom: 1px solid var(--border); flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  }
+  .nav-links.open { display: flex; }
+  .hamburger { display: flex; }
+  .user-name { display: none; }
+}
+
+/* Role chips */
+.role-chip {
+  font-size: 16px;
+  line-height: 1;
+}
+.role-badge-sm {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 50px;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.role-admin .role-badge-sm, .role-badge-sm.role-admin { background: #FEF3C7; color: #92400E; }
+.role-company .role-badge-sm, .role-badge-sm.role-company { background: #EEF2FF; color: #3730A3; }
+.role-student .role-badge-sm, .role-badge-sm.role-student { background: #ECFDF5; color: #065F46; }
