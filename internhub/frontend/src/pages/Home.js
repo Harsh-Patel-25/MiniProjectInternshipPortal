@@ -86,7 +86,7 @@ const Home = () => {
           <div className="hero-dots"></div>
         </div>
         <div className="container hero-content">
-          <div className="hero-badge"><i className="fa-solid fa-rocket" aria-hidden></i> <span>India's #1 Internship Platform</span></div>
+          <div className="hero-badge"> <span>🚀 India's #1 Internship Platform</span></div>
           <h1>Find Your Dream<br /><span className="gradient-text">Internship</span> Today</h1>
           <p className="hero-desc">Connect with 5,000+ top companies and discover internship opportunities that match your skills and passion. Launch your career with InternHub.</p>
 
