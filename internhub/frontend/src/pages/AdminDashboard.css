@@ -13,7 +13,7 @@
 .admin-tabs {
   display: flex; gap: 4px; background: white; border: 1px solid var(--border);
   border-radius: var(--radius); padding: 6px; margin-bottom: 28px;
-  width: fit-content; flex-wrap: wrap;
+  width: fit-content; flex-wrap: wrap; margin-top: 50px;
 }
 .admin-tabs button {
   padding: 10px 20px; border-radius: 8px; border: none;

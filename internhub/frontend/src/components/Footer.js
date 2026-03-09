@@ -12,8 +12,8 @@ const Footer = () => (
           <div className="social-links">
             <a href="#" aria-label="LinkedIn">in</a>
             <a href="#" aria-label="Twitter"><i className="fa-brands fa-twitter"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" aria-label="Instagram"><i className="fa-brands fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i className="fa-brands fa-youtube"></i></a>
           </div>
         </div>
 
