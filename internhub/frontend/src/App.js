@@ -16,6 +16,7 @@ import PostInternship from './pages/PostInternship';
 import { MyApplications } from './pages/MyApplications';
 import SavedInternships from './pages/SavedInternships';
 import './styles/App.css';
+import ResumeBuilder from './pages/ResumeBuilder';
 
 const ProtectedRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
@@ -46,6 +47,7 @@ function AppContent() {
             <Route path="/dashboard" element={<ProtectedRoute roles={['student']}><Dashboard /></ProtectedRoute>} />
             <Route path="/my-applications" element={<ProtectedRoute roles={['student']}><MyApplications /></ProtectedRoute>} />
             <Route path="/saved" element={<ProtectedRoute roles={['student']}><SavedInternships /></ProtectedRoute>} />
+            <Route path="/resume-builder" element={<ProtectedRoute roles={['student']}><ResumeBuilder /></ProtectedRoute>} />
 
             {/* Company only — admin cannot access these */}
             <Route path="/company/dashboard" element={<ProtectedRoute roles={['company']}><CompanyDashboard /></ProtectedRoute>} />
