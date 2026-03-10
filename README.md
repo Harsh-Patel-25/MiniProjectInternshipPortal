@@ -250,4 +250,4 @@ Feel free to fork, improve, and submit pull requests!
 
 ---
 
-*Built with ❤️ using React.js, Node.js, Express.js, and MongoDB*
+*Built using React.js, Node.js, Express.js, and MongoDB*
