@@ -15,7 +15,7 @@ export const Login = () => {
     setLoading(true);
     try {
       const data = await login(form.email, form.password);
-      toast.success(`Welcome back, ${data.user.name}! 👋`);
+      toast.success(`Welcome back, ${data.user.name}!`);
       if (data.user.role === 'company') navigate('/company/dashboard');
       else navigate('/dashboard');
     } catch (err) {
@@ -28,13 +28,13 @@ export const Login = () => {
   return (
     <div className="auth-page">
       <div className="auth-left">
-        <div className="auth-promo">
+          <div className="auth-promo">
           <Link to="/" className="auth-logo"><i className="fa-solid fa-bullseye" aria-hidden></i> <strong>Intern<span>Hub</span></strong></Link>
           <h2>Find Your Dream Internship Today</h2>
           <p>Join 50,000+ students who launched their careers with InternHub</p>
           <div className="auth-features">
             {['10,000+ live internships', 'Top companies across India', 'Apply in one click', 'Track all applications'].map((f, i) => (
-              <div key={i} className="auth-feature-item"><i className="fa-solid fa-check-circle" aria-hidden></i> {f}</div>
+              <div key={i} className="auth-feature-item"><i className="fa-solid fa-circle-check" style={{ color: '#10B981', marginRight: 8 }} aria-hidden></i> {f}</div>
             ))}
           </div>
         </div>
@@ -95,13 +95,13 @@ export const Register = () => {
   return (
     <div className="auth-page">
       <div className="auth-left">
-        <div className="auth-promo">
-          <Link to="/" className="auth-logo">🎯 <strong>Intern<span>Hub</span></strong></Link>
+          <div className="auth-promo">
+            <Link to="/" className="auth-logo"><i className="fa-solid fa-bullseye" style={{ marginRight: 8 }}></i> <strong>Intern<span>Hub</span></strong></Link>
           <h2>Start Your Internship Journey</h2>
           <p>Sign up in seconds and discover thousands of opportunities</p>
           <div className="auth-features">
             {['Free to join', 'Instant profile creation', 'AI-powered matches', 'One-click applications'].map((f, i) => (
-              <div key={i} className="auth-feature-item"><span>✅</span> {f}</div>
+              <div key={i} className="auth-feature-item"><i className="fa-solid fa-circle-check" style={{ color: '#10B981', marginRight: 8 }}></i> {f}</div>
             ))}
           </div>
         </div>
@@ -113,10 +113,10 @@ export const Register = () => {
 
           <div className="role-selector">
             <button className={`role-btn ${form.role === 'student' ? 'active' : ''}`} onClick={() => setForm({...form, role: 'student'})} type="button">
-              <span>👨‍🎓</span> I'm a Student
+              <i className="fa-solid fa-user-graduate" style={{ marginRight: 8 }}></i> I'm a Student
             </button>
             <button className={`role-btn ${form.role === 'company' ? 'active' : ''}`} onClick={() => setForm({...form, role: 'company'})} type="button">
-              <span>🏢</span> I'm a Company
+              <i className="fa-solid fa-building" style={{ marginRight: 8 }}></i> I'm a Company
             </button>
           </div>
 

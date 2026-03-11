@@ -75,7 +75,7 @@ const InternshipDetail = () => {
       await applicationAPI.apply({ internshipId: id, coverLetter, resume: resume || user?.resume });
       setApplied(true);
       setShowApplyModal(false);
-      toast.success('Application submitted successfully! 🎉');
+      toast.success('Application submitted successfully!');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to apply');
     } finally {
@@ -113,42 +113,45 @@ const InternshipDetail = () => {
           {/* Main Content */}
           <div className="detail-main">
             <div className="detail-header-card">
-              <div className="detail-company-header">
+                  <div className="detail-company-header">
                 <div className="detail-company-logo">
                   {internship.companyLogo
                     ? <img src={internship.companyLogo} alt={internship.company} />
                     : <span>{internship.company?.charAt(0)}</span>
                   }
                 </div>
-                <div>
+                  <div>
                   <h1>{internship.title}</h1>
                   <p className="detail-company">{internship.company}</p>
-                  <div className="detail-location">📍 {internship.location}</div>
+                  <div className="detail-location"><i className="fa-solid fa-location-dot" style={{ marginRight: 6, color: 'var(--gray)' }}></i>{internship.location}</div>
                 </div>
               </div>
 
               <div className="detail-meta-tags">
                 <span className="badge badge-primary">
-                  {internship.type === 'remote' ? '🌐' : internship.type === 'onsite' ? '🏢' : '🔄'} {internship.type?.charAt(0).toUpperCase() + internship.type?.slice(1)}
+                  {internship.type === 'remote' ? <i className="fa-solid fa-globe" style={{ marginRight: 6, color: '#06B6D4' }}></i>
+                   : internship.type === 'onsite' ? <i className="fa-solid fa-building" style={{ marginRight: 6, color: 'var(--gray)' }}></i>
+                   : <i className="fa-solid fa-arrows-rotate" style={{ marginRight: 6, color: '#6B7280' }}></i>}
+                  {internship.type?.charAt(0).toUpperCase() + internship.type?.slice(1)}
                 </span>
-                <span className="badge badge-gray">📁 {internship.category?.charAt(0).toUpperCase() + internship.category?.slice(1)}</span>
-                {internship.isFeatured && <span className="badge badge-secondary">⭐ Featured</span>}
+                <span className="badge badge-gray"><i className="fa-solid fa-folder" style={{ marginRight: 6, color: 'var(--gray)' }}></i>{internship.category?.charAt(0).toUpperCase() + internship.category?.slice(1)}</span>
+                {internship.isFeatured && <span className="badge badge-secondary"><i className="fa-solid fa-star" style={{ color: '#FBBF24', marginRight: 6 }}></i> Featured</span>}
               </div>
 
               <div className="detail-stats-row">
                 <div className="detail-stat">
-                  <span className="stat-icon">💰</span>
+                  <span className="stat-icon"><i className="fa-solid fa-coins" style={{ color: '#10B981' }}></i></span>
                   <div>
                     <small>Stipend</small>
                     <strong>{internship.stipend?.type === 'unpaid' ? 'Unpaid' : `₹${internship.stipend?.amount?.toLocaleString('en-IN')}/month`}</strong>
                   </div>
                 </div>
                 <div className="detail-stat">
-                  <span className="stat-icon">⏱</span>
+                  <span className="stat-icon"><i className="fa-solid fa-hourglass-half" style={{ color: '#F97316' }}></i></span>
                   <div><small>Duration</small><strong>{internship.duration}</strong></div>
                 </div>
                 <div className="detail-stat">
-                  <span className="stat-icon">📅</span>
+                  <span className="stat-icon"><i className="fa-solid fa-calendar-days" style={{ color: '#6B7280' }}></i></span>
                   <div>
                     <small>Deadline</small>
                     <strong className={isExpired ? 'text-error' : daysLeft <= 5 ? 'text-warning' : ''}>
@@ -157,7 +160,7 @@ const InternshipDetail = () => {
                   </div>
                 </div>
                 <div className="detail-stat">
-                  <span className="stat-icon">🎯</span>
+                  <span className="stat-icon"><i className="fa-solid fa-bullseye" style={{ color: '#F59E0B' }}></i></span>
                   <div><small>Openings</small><strong>{internship.openings}</strong></div>
                 </div>
               </div>
@@ -203,7 +206,7 @@ const InternshipDetail = () => {
               <div className="detail-section">
                 <h2>Perks & Benefits</h2>
                 <div className="perks-list">
-                  {internship.perks.map((perk, i) => <div key={i} className="perk-item"><span>✅</span> {perk}</div>)}
+                  {internship.perks.map((perk, i) => <div key={i} className="perk-item"><i className="fa-solid fa-circle-check" style={{ color: '#10B981', marginRight: 8 }}></i> {perk}</div>)}
                 </div>
               </div>
             )}
@@ -225,16 +228,16 @@ const InternshipDetail = () => {
               {isStudent && !isExpired && (
                 applied ? (
                   <div className="applied-notice">
-                    <span>✅</span>
+                    <i className="fa-solid fa-circle-check" style={{ color: '#10B981', fontSize: 18, marginRight: 8 }}></i>
                     <div><strong>Applied!</strong><p>You have already applied for this internship.</p></div>
                   </div>
                 ) : (
-                  <button
-                    className="btn btn-primary btn-lg apply-btn"
-                    onClick={() => setShowApplyModal(true)}
-                  >
-                    Apply Now →
-                  </button>
+                    <button
+                      className="btn btn-primary btn-lg apply-btn"
+                      onClick={() => setShowApplyModal(true)}
+                    >
+                      Apply Now <i className="fa-solid fa-arrow-right" style={{ marginLeft: 8 }}></i>
+                    </button>
                 )
               )}
 
@@ -249,27 +252,27 @@ const InternshipDetail = () => {
               {user && !isStudent && (
                 <div className="role-notice">
                   {user.role === 'company'
-                    ? '🏢 You are viewing as a Company'
-                    : '🛡️ You are viewing as Admin'}
+                    ? <><i className="fa-solid fa-building" style={{ marginRight: 8 }}></i> You are viewing as a Company</>
+                    : <><i className="fa-solid fa-shield" style={{ marginRight: 8 }}></i> You are viewing as Admin</>}
                 </div>
               )}
 
               {/* Save button — students only */}
-              {isStudent && (
+                  {isStudent && (
                 <button
                   className={`btn btn-outline save-internship-btn ${saved ? 'saved' : ''}`}
                   onClick={handleSave}
                 >
-                  {saved ? '🔖 Saved' : '🔖 Save Internship'}
+                  {saved ? <><i className="fa-solid fa-bookmark" style={{ color: '#F59E0B', marginRight: 8 }}></i> Saved</> : <><i className="fa-solid fa-bookmark" style={{ marginRight: 8 }}></i> Save Internship</>}
                 </button>
               )}
 
               <div className="apply-meta">
-                <div className="apply-meta-item"><span>👥</span> {internship.applicationsCount} applications</div>
-                <div className="apply-meta-item"><span>👁</span> {internship.views} views</div>
+                <div className="apply-meta-item"><i className="fa-solid fa-users" style={{ marginRight: 8 }}></i> {internship.applicationsCount} applications</div>
+                <div className="apply-meta-item"><i className="fa-solid fa-eye" style={{ marginRight: 8 }}></i> {internship.views} views</div>
                 {internship.startDate && (
                   <div className="apply-meta-item">
-                    <span>🚀</span> Starts {format(new Date(internship.startDate), 'MMM dd, yyyy')}
+                    <i className="fa-solid fa-rocket" style={{ marginRight: 8, color: '#EF4444' }}></i> Starts {format(new Date(internship.startDate), 'MMM dd, yyyy')}
                   </div>
                 )}
               </div>
@@ -277,11 +280,11 @@ const InternshipDetail = () => {
 
             <div className="company-card">
               <h3>About Company</h3>
-              <div className="company-info">
+                <div className="company-info">
                 <div className="company-logo-md">{internship.company?.charAt(0)}</div>
                 <div>
                   <strong>{internship.company}</strong>
-                  <p>📍 {internship.location}</p>
+                  <p><i className="fa-solid fa-location-dot" style={{ marginRight: 6, color: 'var(--gray)' }}></i>{internship.location}</p>
                 </div>
               </div>
             </div>
@@ -319,7 +322,7 @@ const InternshipDetail = () => {
               <div className="modal-footer">
                 <button type="button" className="btn btn-outline" onClick={() => setShowApplyModal(false)}>Cancel</button>
                 <button type="submit" className="btn btn-primary" disabled={applying}>
-                  {applying ? 'Submitting...' : '📨 Submit Application'}
+                  {applying ? 'Submitting...' : <><i className="fa-solid fa-paper-plane" style={{ marginRight: 8 }}></i> Submit Application</>}
                 </button>
               </div>
             </form>

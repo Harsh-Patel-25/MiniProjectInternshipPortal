@@ -6,12 +6,12 @@ import toast from 'react-hot-toast';
 import InternshipCard from '../components/InternshipCard';
 
 const STATUS_CONFIG = {
-  pending: { color: 'warning', label: 'Pending Review', icon: '⏳' },
-  reviewed: { color: 'accent', label: 'Reviewed', icon: '👀' },
-  shortlisted: { color: 'primary', label: 'Shortlisted!', icon: '⭐' },
-  interview: { color: 'secondary', label: 'Interview Scheduled', icon: '📞' },
-  selected: { color: 'success', label: 'Selected! 🎉', icon: '✅' },
-  rejected: { color: 'error', label: 'Not Selected', icon: '❌' }
+  pending: { color: 'warning', label: 'Pending Review', icon: 'fa-hourglass-half', iconColor: '#F59E0B' },
+  reviewed: { color: 'accent', label: 'Reviewed', icon: 'fa-eye', iconColor: '#6B7280' },
+  shortlisted: { color: 'primary', label: 'Shortlisted!', icon: 'fa-star', iconColor: '#FBBF24' },
+  interview: { color: 'secondary', label: 'Interview Scheduled', icon: 'fa-phone', iconColor: '#A78BFA' },
+  selected: { color: 'success', label: 'Selected!', icon: 'fa-check', iconColor: '#10B981' },
+  rejected: { color: 'error', label: 'Not Selected', icon: 'fa-xmark', iconColor: '#EF4444' }
 };
 
 export const MyApplications = () => {
@@ -45,6 +45,15 @@ export const MyApplications = () => {
 
   const filtered = filter === 'all' ? applications : applications.filter(a => a.status === filter);
 
+  const FILTER_TABS = [
+    { val: 'all', label: 'All', icon: 'fa-list', iconColor: 'var(--dark-3)', count: applications.length },
+    { val: 'pending', label: 'Pending', icon: 'fa-hourglass-half', iconColor: '#F59E0B' },
+    { val: 'shortlisted', label: 'Shortlisted', icon: 'fa-star', iconColor: '#FBBF24' },
+    { val: 'interview', label: 'Interview', icon: 'fa-phone', iconColor: '#A78BFA' },
+    { val: 'selected', label: 'Selected', icon: 'fa-check', iconColor: '#10B981' },
+    { val: 'rejected', label: 'Rejected', icon: 'fa-xmark', iconColor: '#EF4444' }
+  ];
+
   if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
   return (
@@ -58,7 +67,7 @@ export const MyApplications = () => {
       <div className="container" style={{ padding: '32px 24px' }}>
         {/* Filter tabs */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
-          {[['all', 'All', applications.length], ['pending', '⏳ Pending'], ['shortlisted', '⭐ Shortlisted'], ['interview', '📞 Interview'], ['selected', '✅ Selected'], ['rejected', '❌ Rejected']].map(([val, label, count]) => (
+          {FILTER_TABS.map(({ val, label, icon, iconColor, count }) => (
             <button
               key={val}
               onClick={() => setFilter(val)}
@@ -67,17 +76,19 @@ export const MyApplications = () => {
                 borderColor: filter === val ? 'var(--primary)' : 'var(--border)',
                 background: filter === val ? 'var(--primary)' : 'white',
                 color: filter === val ? 'white' : 'var(--dark-3)',
-                fontFamily: 'DM Sans, sans-serif', fontSize: '14px', fontWeight: '500', cursor: 'pointer'
+                fontFamily: 'DM Sans, sans-serif', fontSize: '14px', fontWeight: '500', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px'
               }}
             >
-              {label} {count !== undefined && `(${count})`}
+              <i className={`fa-solid ${icon}`} style={{ color: iconColor }}></i>
+              <span>{label}</span>
+              {count !== undefined && <span style={{ marginLeft: 6 }}>({count})</span>}
             </button>
           ))}
         </div>
 
         {filtered.length === 0 ? (
           <div className="empty-state">
-            <div className="icon">📋</div>
+            <div className="icon"><i className="fa-solid fa-clipboard" style={{ fontSize: 40, color: 'var(--gray)' }}></i></div>
             <h3>{filter === 'all' ? 'No applications yet' : `No ${filter} applications`}</h3>
             <p>Start applying to internships to track them here</p>
             <Link to="/internships" className="btn btn-primary">Browse Internships</Link>
@@ -94,12 +105,22 @@ export const MyApplications = () => {
                   </div>
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <h3 style={{ fontSize: '17px', marginBottom: '4px' }}>{intern?.title || 'Internship'}</h3>
-                    <p style={{ color: 'var(--gray)', fontSize: '14px', marginBottom: '8px' }}>🏢 {intern?.company} &nbsp;•&nbsp; 📍 {intern?.location} &nbsp;•&nbsp; 💰 {intern?.stipend?.amount ? `₹${intern.stipend.amount.toLocaleString('en-IN')}/mo` : 'Unpaid'}</p>
+                    <p style={{ color: 'var(--gray)', fontSize: '14px', marginBottom: '8px' }}>
+                      <i className="fa-solid fa-building" style={{ marginRight: 6, color: 'var(--gray)' }}></i>
+                      {intern?.company} &nbsp;•&nbsp;
+                      <i className="fa-solid fa-location-dot" style={{ margin: '0 6px', color: 'var(--gray)' }}></i>
+                      {intern?.location} &nbsp;•&nbsp;
+                      <i className="fa-solid fa-coins" style={{ margin: '0 6px', color: 'var(--gray)' }}></i>
+                      {intern?.stipend?.amount ? `₹${intern.stipend.amount.toLocaleString('en-IN')}/mo` : 'Unpaid'}
+                    </p>
                     <p style={{ fontSize: '13px', color: 'var(--gray)' }}>Applied on {format(new Date(app.appliedAt), 'MMMM dd, yyyy')}</p>
-                    {app.feedback && <p style={{ marginTop: '8px', fontSize: '13px', color: 'var(--dark-3)', fontStyle: 'italic', background: 'var(--bg)', padding: '8px 12px', borderRadius: '8px' }}>💬 {app.feedback}</p>}
+                    {app.feedback && <p style={{ marginTop: '8px', fontSize: '13px', color: 'var(--dark-3)', fontStyle: 'italic', background: 'var(--bg)', padding: '8px 12px', borderRadius: '8px' }}><i className="fa-solid fa-comment" style={{ marginRight: 8, color: 'var(--primary)' }}></i>{app.feedback}</p>}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
-                    <span className={`badge badge-${cfg.color}`}>{cfg.icon} {cfg.label}</span>
+                    <span className={`badge badge-${cfg.color}`}>
+                      <i className={`fa-solid ${cfg.icon}`} style={{ color: cfg.iconColor, marginRight: 8 }}></i>
+                      {cfg.label}
+                    </span>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       {intern?._id && <Link to={`/internships/${intern._id}`} className="btn btn-outline btn-sm">View Internship</Link>}
                       {app.status === 'pending' && <button onClick={() => handleWithdraw(app._id)} className="btn btn-sm" style={{ background: '#FEF2F2', color: 'var(--error)', border: '1px solid #FECACA' }}>Withdraw</button>}
@@ -157,7 +178,7 @@ export const SavedInternships = () => {
       <div className="container" style={{ padding: '32px 24px' }}>
         {internships.length === 0 ? (
           <div className="empty-state">
-            <div className="icon">🔖</div>
+            <div className="icon"><i className="fa-solid fa-bookmark" style={{ fontSize: 36, color: 'var(--gray)' }}></i></div>
             <h3>No saved internships</h3>
             <p>Browse and save internships you're interested in applying for</p>
             <Link to="/internships" className="btn btn-primary">Browse Internships</Link>

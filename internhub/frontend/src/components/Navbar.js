@@ -43,6 +43,7 @@ const Navbar = () => {
             <>
               <Link to="/dashboard" className={isActive('/dashboard') ? 'active' : ''}>Dashboard</Link>
               <Link to="/my-applications" className={isActive('/my-applications') ? 'active' : ''}>Applications</Link>
+              <Link to="/resume-builder" className={isActive('/resume-builder') ? 'active' : ''}>Resume Builder</Link>
             </>
           )}
 
@@ -57,7 +58,7 @@ const Navbar = () => {
           {/* Admin nav — separate from company */}
           {user?.role === 'admin' && (
             <Link to="/admin/dashboard" className={isActive('/admin/dashboard') ? 'active' : ''}>
-              🛡️ Admin Panel
+              <i className="fa-solid fa-shield" style={{ marginRight: 8 }}></i> Admin Panel
             </Link>
           )}
         </div>

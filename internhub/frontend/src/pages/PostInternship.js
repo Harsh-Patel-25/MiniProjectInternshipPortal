@@ -82,7 +82,7 @@ const PostInternship = () => {
         perks: form.perks.filter(p => p.trim()),
       };
       await internshipAPI.create(data);
-      toast.success('Internship posted successfully! 🎉');
+      toast.success('Internship posted successfully!');
       navigate('/company/dashboard');
     } catch (err) {
       console.error('Post error:', err.response?.data);
@@ -123,24 +123,24 @@ const PostInternship = () => {
               <div className="form-group">
                 <label>Work Type *</label>
                 <select value={form.type} onChange={e => updateField('type', e.target.value)}>
-                  <option value="onsite">🏢 On-site</option>
-                  <option value="remote">🌐 Remote</option>
-                  <option value="hybrid">🔄 Hybrid</option>
+                  <option value="onsite">On-site</option>
+                  <option value="remote">Remote</option>
+                  <option value="hybrid">Hybrid</option>
                 </select>
               </div>
               <div className="form-group">
                 <label>Category *</label>
                 <select value={form.category} onChange={e => updateField('category', e.target.value)}>
-                  <option value="technology">💻 Technology</option>
-                  <option value="marketing">📊 Marketing</option>
-                  <option value="design">🎨 Design</option>
-                  <option value="finance">💰 Finance</option>
-                  <option value="hr">👥 Human Resources</option>
-                  <option value="sales">📈 Sales</option>
-                  <option value="engineering">⚙️ Engineering</option>
-                  <option value="data">🗄️ Data Science</option>
-                  <option value="operations">🔧 Operations</option>
-                  <option value="other">📦 Other</option>
+                  <option value="technology">Technology</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="design">Design</option>
+                  <option value="finance">Finance</option>
+                  <option value="hr">Human Resources</option>
+                  <option value="sales">Sales</option>
+                  <option value="engineering">Engineering</option>
+                  <option value="data">Data Science</option>
+                  <option value="operations">Operations</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
             </div>
@@ -168,9 +168,9 @@ const PostInternship = () => {
               <div className="form-group">
                 <label>Stipend Type</label>
                 <select value={form.stipendType} onChange={e => updateField('stipendType', e.target.value)}>
-                  <option value="paid">💰 Paid</option>
-                  <option value="unpaid">🎓 Unpaid</option>
-                  <option value="performance-based">📈 Performance Based</option>
+                  <option value="paid">Paid</option>
+                  <option value="unpaid">Unpaid</option>
+                  <option value="performance-based">Performance Based</option>
                 </select>
               </div>
               {form.stipendType === 'paid' && (
@@ -289,7 +289,7 @@ const PostInternship = () => {
           <div className="form-actions">
             <button type="button" className="btn btn-outline btn-lg" onClick={() => navigate('/company/dashboard')}>Cancel</button>
             <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
-              {loading ? 'Posting...' : '🚀 Post Internship'}
+              {loading ? 'Posting...' : <><i className="fa-solid fa-rocket" style={{ marginRight: 8, color: '#EF4444' }}></i> Post Internship</>}
             </button>
           </div>
 

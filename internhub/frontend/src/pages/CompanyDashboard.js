@@ -161,7 +161,7 @@ const CompanyDashboard = () => {
               <div style={{textAlign:'center',padding:'40px'}}><div className="spinner" style={{margin:'0 auto'}}></div></div>
             ) : applications.length === 0 ? (
               <div className="empty-state">
-                <div className="icon">📨</div>
+                <div className="icon"><i className="fa-solid fa-envelope" style={{ fontSize: 36, color: 'var(--gray)' }}></i></div>
                 <h3>No applications yet</h3>
                 <p>Applications for this internship will appear here</p>
               </div>

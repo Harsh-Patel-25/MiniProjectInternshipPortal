@@ -52,7 +52,7 @@ const Profile = () => {
     try {
       const res = await userAPI.updateProfile(form);
       updateUser(res.data.user);
-      toast.success('Profile updated successfully! ✅');
+      toast.success('Profile updated successfully!');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update');
     } finally {
@@ -78,7 +78,7 @@ const Profile = () => {
             <div className="profile-avatar-large">{user?.name?.charAt(0)}</div>
             <h3>{user?.name}</h3>
             <p>{user?.email}</p>
-            <span className="badge badge-primary">{user?.role === 'student' ? '👨‍🎓 Student' : '🏢 Company'}</span>
+            <span className="badge badge-primary">{user?.role === 'student' ? <><i className="fa-solid fa-user-graduate" style={{ marginRight: 6 }}></i>Student</> : <><i className="fa-solid fa-building" style={{ marginRight: 6 }}></i>Company</>}</span>
             <div className="completeness-bar">
               <div className="completeness-header">
                 <span>Profile Completeness</span>
@@ -90,7 +90,7 @@ const Profile = () => {
           <nav className="profile-nav">
             {['basic', 'skills', 'education', 'experience', 'links'].map(tab => (
               <button key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => setActiveTab(tab)}>
-                {tab === 'basic' ? '👤 Basic Info' : tab === 'skills' ? '💡 Skills' : tab === 'education' ? '🎓 Education' : tab === 'experience' ? '💼 Experience' : '🔗 Links & Resume'}
+                {tab === 'basic' ? <><i className="fa-solid fa-user" style={{ marginRight: 8 }}></i> Basic Info</> : tab === 'skills' ? <><i className="fa-solid fa-lightbulb" style={{ marginRight: 8, color: '#F59E0B' }}></i> Skills</> : tab === 'education' ? <><i className="fa-solid fa-graduation-cap" style={{ marginRight: 8, color: '#FBBF24' }}></i> Education</> : tab === 'experience' ? <><i className="fa-solid fa-briefcase" style={{ marginRight: 8 }}></i> Experience</> : <><i className="fa-solid fa-link" style={{ marginRight: 8 }}></i> Links & Resume</>}
               </button>
             ))}
           </nav>
@@ -165,16 +165,16 @@ const Profile = () => {
           {activeTab === 'links' && (
             <div className="profile-section">
               <h2>Links & Resume</h2>
-              <div className="form-group"><label>🔗 LinkedIn Profile</label><input type="url" placeholder="https://linkedin.com/in/yourprofile" value={form.linkedIn} onChange={e => updateField('linkedIn', e.target.value)} /></div>
-              <div className="form-group"><label>💻 GitHub Profile</label><input type="url" placeholder="https://github.com/yourusername" value={form.github} onChange={e => updateField('github', e.target.value)} /></div>
-              <div className="form-group"><label>🌐 Portfolio Website</label><input type="url" placeholder="https://yourportfolio.com" value={form.portfolio} onChange={e => updateField('portfolio', e.target.value)} /></div>
-              <div className="form-group"><label>📄 Resume Link (Google Drive / OneDrive)</label><input type="url" placeholder="https://drive.google.com/..." value={form.resume} onChange={e => updateField('resume', e.target.value)} /></div>
+              <div className="form-group"><label><i className="fa-brands fa-linkedin" style={{ marginRight: 8, color: '#0A66C2' }}></i> LinkedIn Profile</label><input type="url" placeholder="https://linkedin.com/in/yourprofile" value={form.linkedIn} onChange={e => updateField('linkedIn', e.target.value)} /></div>
+              <div className="form-group"><label><i className="fa-brands fa-github" style={{ marginRight: 8 }}></i> GitHub Profile</label><input type="url" placeholder="https://github.com/yourusername" value={form.github} onChange={e => updateField('github', e.target.value)} /></div>
+              <div className="form-group"><label><i className="fa-solid fa-globe" style={{ marginRight: 8 }}></i> Portfolio Website</label><input type="url" placeholder="https://yourportfolio.com" value={form.portfolio} onChange={e => updateField('portfolio', e.target.value)} /></div>
+              <div className="form-group"><label><i className="fa-solid fa-file-lines" style={{ marginRight: 8 }}></i> Resume Link (Google Drive / OneDrive)</label><input type="url" placeholder="https://drive.google.com/..." value={form.resume} onChange={e => updateField('resume', e.target.value)} /></div>
             </div>
           )}
 
           <div className="profile-actions">
             <button className="btn btn-primary btn-lg" onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving...' : '💾 Save Changes'}
+              {saving ? 'Saving...' : <><i className="fa-solid fa-floppy-disk" style={{ marginRight: 8 }}></i> Save Changes</>}
             </button>
           </div>
         </div>
