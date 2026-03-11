@@ -9,9 +9,8 @@ const ResumeBuilder = () => {
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState(null);
-  const [template, setTemplate] = useState('modern');
   const [keywords, setKeywords] = useState(null);
-  const [activeTab, setActiveTab] = useState('preview'); // 'preview', 'optimize', 'download'
+  const [activeTab, setActiveTab] = useState('preview'); // 'preview' or 'optimize'
 
   useEffect(() => {
     fetchKeywords();
@@ -43,7 +42,7 @@ const ResumeBuilder = () => {
     setLoading(true);
     try {
       const res = await api.post('/resume/generate', 
-        { template }, 
+        {}, 
         { responseType: 'blob' }
       );
       
@@ -91,18 +90,18 @@ const ResumeBuilder = () => {
         {/* Header */}
         <div className="resume-header">
           <div>
-            <h1>📄 Resume Builder</h1>
-            <p>Create a FAANG-level ATS-optimized resume from your profile</p>
+            <h1><i className="fa-solid fa-file-pdf" style={{ color: '#E53E3E', marginRight: 10 }} aria-hidden></i> Resume Builder</h1>
+            <p>Create a professional ATS-optimized resume from your profile</p>
           </div>
           <button className="btn btn-primary" onClick={downloadResume} disabled={loading || profileCompletion < 60}>
-            {loading ? 'Generating...' : '⬇ Download Resume'}
+            {loading ? 'Generating...' : <><i className="fa-solid fa-download" style={{ color: '#fff', marginRight: 8 }} aria-hidden></i> Download Resume</>}
           </button>
         </div>
 
         {/* Profile Completion Alert */}
         {profileCompletion < 60 && (
           <div className="alert alert-warning">
-            <strong>⚠️ Profile Incomplete ({profileCompletion}%)</strong>
+            <strong><i className="fa-solid fa-triangle-exclamation" style={{ color: '#92400E', marginRight: 8 }} aria-hidden></i> Profile Incomplete ({profileCompletion}%)</strong>
             <p>Complete your profile to at least 60% to generate a resume. Add education, experience, and skills.</p>
           </div>
         )}
@@ -113,19 +112,13 @@ const ResumeBuilder = () => {
             className={activeTab === 'preview' ? 'active' : ''} 
             onClick={() => setActiveTab('preview')}
           >
-            👁️ Preview
+            <i className="fa-solid fa-eye" style={{ color: '#111827', marginRight: 8 }} aria-hidden></i> Preview
           </button>
           <button 
             className={activeTab === 'optimize' ? 'active' : ''} 
             onClick={() => setActiveTab('optimize')}
           >
-            🎯 Optimize
-          </button>
-          <button 
-            className={activeTab === 'download' ? 'active' : ''} 
-            onClick={() => setActiveTab('download')}
-          >
-            ⚙️ Templates
+            <i className="fa-solid fa-bullseye" style={{ color: '#0EA5A4', marginRight: 8 }} aria-hidden></i> Optimize
           </button>
         </div>
 
@@ -215,28 +208,28 @@ const ResumeBuilder = () => {
               {/* Quick Stats Sidebar */}
               <div className="preview-stats">
                 <div className="stat-card">
-                  <div className="stat-icon">📊</div>
+                  <div className="stat-icon"><i className="fa-solid fa-chart-simple" style={{ color: '#2563EB' }} aria-hidden></i></div>
                   <div>
                     <strong>{profileCompletion}%</strong>
                     <small>Profile Complete</small>
                   </div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-icon">🎯</div>
+                  <div className="stat-icon"><i className="fa-solid fa-bullseye" style={{ color: '#0EA5A4' }} aria-hidden></i></div>
                   <div>
                     <strong>{user.skills?.length || 0}</strong>
                     <small>Skills Listed</small>
                   </div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-icon">💼</div>
+                  <div className="stat-icon"><i className="fa-solid fa-briefcase" style={{ color: '#7C3AED' }} aria-hidden></i></div>
                   <div>
                     <strong>{user.experience?.length || 0}</strong>
                     <small>Experience</small>
                   </div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-icon">🎓</div>
+                  <div className="stat-icon"><i className="fa-solid fa-graduation-cap" style={{ color: '#F59E0B' }} aria-hidden></i></div>
                   <div>
                     <strong>{user.education?.length || 0}</strong>
                     <small>Education</small>
@@ -255,7 +248,7 @@ const ResumeBuilder = () => {
                   onClick={analyzeResume}
                   disabled={analyzing}
                 >
-                  {analyzing ? 'Analyzing...' : '🔍 Analyze My Resume'}
+                  {analyzing ? 'Analyzing...' : <><i className="fa-solid fa-magnifying-glass" style={{ marginRight: 8 }} aria-hidden></i> Analyze My Resume</>}
                 </button>
 
                 {analysis && (
@@ -299,7 +292,7 @@ const ResumeBuilder = () => {
                     {/* Suggestions */}
                     {analysis.suggestions?.length > 0 && (
                       <div className="suggestions-card">
-                        <h3>💡 Improvement Suggestions</h3>
+                        <h3><i className="fa-solid fa-lightbulb" style={{ color: '#FBBF24', marginRight: 8 }} aria-hidden></i> Improvement Suggestions</h3>
                         <ul>
                           {analysis.suggestions.map((suggestion, i) => (
                             <li key={i}>{suggestion}</li>
@@ -310,9 +303,9 @@ const ResumeBuilder = () => {
 
                     {/* Keywords */}
                     <div className="keywords-card">
-                      <h3>🔑 FAANG Keywords</h3>
+                      <h3><i className="fa-solid fa-key" style={{ color: '#F97316', marginRight: 8 }} aria-hidden></i> FAANG Keywords</h3>
                       <div className="keyword-section">
-                        <strong className="keyword-found">✅ Found ({analysis.keywords.found.length}):</strong>
+                        <strong className="keyword-found"><i className="fa-solid fa-circle-check" style={{ color: '#10B981', marginRight: 8 }} aria-hidden></i> Found ({analysis.keywords.found.length}):</strong>
                         <div className="keyword-tags">
                           {analysis.keywords.found.slice(0, 10).map((kw, i) => (
                             <span key={i} className="keyword-tag found">{kw}</span>
@@ -321,7 +314,7 @@ const ResumeBuilder = () => {
                         </div>
                       </div>
                       <div className="keyword-section">
-                        <strong className="keyword-missing">❌ Missing (Consider Adding):</strong>
+                        <strong className="keyword-missing"><i className="fa-solid fa-circle-xmark" style={{ color: '#EF4444', marginRight: 8 }} aria-hidden></i> Missing (Consider Adding):</strong>
                         <div className="keyword-tags">
                           {analysis.keywords.missing.slice(0, 15).map((kw, i) => (
                             <span key={i} className="keyword-tag missing">{kw}</span>
@@ -346,62 +339,6 @@ const ResumeBuilder = () => {
                     <li><strong>Keywords matter:</strong> Match job description language</li>
                   </ul>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* TEMPLATES TAB */}
-          {activeTab === 'download' && (
-            <div className="templates-section">
-              <h3>Choose Your Template</h3>
-              <div className="template-grid">
-                <div 
-                  className={`template-card ${template === 'modern' ? 'selected' : ''}`}
-                  onClick={() => setTemplate('modern')}
-                >
-                  <div className="template-preview modern-template"></div>
-                  <div className="template-info">
-                    <strong>Modern</strong>
-                    <small>Clean, professional, ATS-optimized</small>
-                  </div>
-                  {template === 'modern' && <div className="template-badge">✓ Selected</div>}
-                </div>
-
-                <div 
-                  className={`template-card ${template === 'classic' ? 'selected' : ''}`}
-                  onClick={() => setTemplate('classic')}
-                >
-                  <div className="template-preview classic-template"></div>
-                  <div className="template-info">
-                    <strong>Classic</strong>
-                    <small>Traditional, conservative, professional</small>
-                  </div>
-                  {template === 'classic' && <div className="template-badge">✓ Selected</div>}
-                </div>
-
-                <div 
-                  className={`template-card ${template === 'minimal' ? 'selected' : ''}`}
-                  onClick={() => setTemplate('minimal')}
-                >
-                  <div className="template-preview minimal-template"></div>
-                  <div className="template-info">
-                    <strong>Minimal</strong>
-                    <small>Simple, elegant, distraction-free</small>
-                  </div>
-                  {template === 'minimal' && <div className="template-badge">✓ Selected</div>}
-                </div>
-              </div>
-
-              <div className="download-section">
-                <h3>Ready to Download?</h3>
-                <p>Your resume will be generated as a PDF using the {template} template.</p>
-                <button 
-                  className="btn btn-primary btn-lg" 
-                  onClick={downloadResume}
-                  disabled={loading || profileCompletion < 60}
-                >
-                  {loading ? 'Generating PDF...' : '📥 Download Resume PDF'}
-                </button>
               </div>
             </div>
           )}
