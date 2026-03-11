@@ -86,7 +86,7 @@ const Home = () => {
           <div className="hero-dots"></div>
         </div>
         <div className="container hero-content">
-          <div className="hero-badge"> <span>🚀 India's #1 Internship Platform</span></div>
+          <div className="hero-badge"> <span><i className="fa-solid fa-rocket" style={{ marginRight: 8, color: '#EF4444' }}></i> India's #1 Internship Platform</span></div>
           <h1>Find Your Dream<br /><span className="gradient-text">Internship</span> Today</h1>
           <p className="hero-desc">Connect with 5,000+ top companies and discover internship opportunities that match your skills and passion. Launch your career with InternHub.</p>
 
@@ -115,7 +115,7 @@ const Home = () => {
             </button>
           </form>
 
-          <div className="hero-tags">
+            <div className="hero-tags">
             <span>Popular:</span>
             {['React Developer', 'Data Science', 'UI/UX Design', 'Digital Marketing', 'Remote'].map(tag => (
               <button key={tag} onClick={() => navigate(`/internships?search=${tag}`)} className="hero-tag">{tag}</button>
@@ -215,7 +215,7 @@ const Home = () => {
           <div className="testimonials-grid">
             {testimonials.map((t, i) => (
               <div key={i} className="testimonial-card">
-                <div className="stars">{'⭐'.repeat(t.stars)}</div>
+                <div className="stars">{Array.from({ length: t.stars }).map((_, idx) => <i key={idx} className="fa-solid fa-star" style={{ color: '#FBBF24', marginRight: 2 }}></i>)}</div>
                 <p>"{t.text}"</p>
                 <div className="testimonial-author">
                   <div className="author-avatar">{t.avatar}</div>
@@ -233,7 +233,7 @@ const Home = () => {
       {/* CTA */}
       <section className="cta-section">
         <div className="container">
-          <div className="cta-card">
+            <div className="cta-card">
             <div className="cta-blob"></div>
             <div className="cta-content">
               <h2>Ready to Start Your Journey?</h2>
@@ -243,7 +243,7 @@ const Home = () => {
                 <Link to="/internships" className="btn btn-lg cta-outline-btn">Browse Internships</Link>
               </div>
             </div>
-            <div className="cta-image">🚀</div>
+            <div className="cta-image"><i className="fa-solid fa-rocket" style={{ fontSize: 40, color: '#EF4444' }}></i></div>
           </div>
         </div>
       </section>
