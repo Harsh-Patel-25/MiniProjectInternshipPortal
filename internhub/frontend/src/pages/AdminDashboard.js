@@ -262,24 +262,24 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {internships.map((intern, i) => (
-                    <tr key={i} className={!intern.isActive ? 'inactive-row' : ''}>
+                    <tr key={i}>
                       <td>
                         <div className="td-primary">{intern.title}</div>
                         <div className="td-secondary">{intern.company}</div>
                       </td>
                       <td>
                         <div className="td-primary">{intern.location}</div>
-                        <span className="badge badge-gray">{intern.type}</span>
+                        <div className="td-secondary"><span className="badge badge-gray">{intern.type}</span></div>
                       </td>
-                      <td>₹{intern.stipend?.amount?.toLocaleString('en-IN') || 0}/mo</td>
-                      <td style={{ fontSize: '13px' }}>{format(new Date(intern.applicationDeadline), 'MMM dd, yyyy')}</td>
+                      <td>{intern.stipend || '—'}</td>
+                      <td style={{ fontSize: '13px' }}>{intern.deadline ? format(new Date(intern.deadline), 'MMM dd, yyyy') : '—'}</td>
                       <td><strong>{intern.applicationsCount || 0}</strong></td>
                       <td>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           <span className={`badge badge-${intern.isActive ? 'success' : 'gray'}`}>
-                            {intern.isActive ? '🟢 Active' : '⚫ Inactive'}
+                            {intern.isActive ? <><i className="fa-solid fa-circle-check" style={{ marginRight: 6 }}></i> Active</> : <><i className="fa-solid fa-circle" style={{ marginRight: 6 }}></i> Inactive</>}
                           </span>
-                          {intern.isFeatured && <span className="badge badge-warning">⭐ Featured</span>}
+                          {intern.isFeatured && <span className="badge badge-warning"><i className="fa-solid fa-star" style={{ color: '#FBBF24', marginRight: 6 }}></i> Featured</span>}
                         </div>
                       </td>
                       <td>
@@ -359,7 +359,7 @@ const AdminDashboard = () => {
                       <td style={{ fontSize: '13px', color: 'var(--gray)' }}>{u.email}</td>
                       <td>
                         <span className={`badge badge-${u.role === 'admin' ? 'warning' : u.role === 'company' ? 'primary' : 'success'}`}>
-                          {u.role === 'admin' ? '🛡️' : u.role === 'company' ? '🏢' : '👨‍🎓'} {u.role}
+                          {u.role === 'admin' ? <i className="fa-solid fa-shield" style={{ marginRight: 6 }}></i> : u.role === 'company' ? <i className="fa-solid fa-building" style={{ marginRight: 6 }}></i> : <i className="fa-solid fa-user-graduate" style={{ marginRight: 6 }}></i>} {u.role}
                         </span>
                       </td>
                       <td style={{ fontSize: '13px' }}>{format(new Date(u.createdAt), 'MMM dd, yyyy')}</td>
@@ -380,7 +380,7 @@ const AdminDashboard = () => {
                           onClick={() => deleteUser(u._id, u.name)}
                           title="Delete User"
                         >
-                          🗑️
+                          <i className="fa-solid fa-trash" aria-hidden></i>
                         </button>
                       </td>
                     </tr>
@@ -443,7 +443,7 @@ const AdminDashboard = () => {
                           onClick={() => deleteApplication(app._id)}
                           title="Delete Application"
                         >
-                          🗑️
+                          <i className="fa-solid fa-trash" aria-hidden></i>
                         </button>
                       </td>
                     </tr>
