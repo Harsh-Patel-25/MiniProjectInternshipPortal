@@ -58,7 +58,7 @@ const Navbar = () => {
           {/* Admin nav — separate from company */}
           {user?.role === 'admin' && (
             <Link to="/admin/dashboard" className={isActive('/admin/dashboard') ? 'active' : ''}>
-              <i className="fa-solid fa-shield" style={{ marginRight: 8 }}></i> Admin Panel
+              <i className="fa-solid fa-shield-halved" style={{ marginRight: 8 }}></i> Admin Panel
             </Link>
           )}
         </div>
@@ -75,7 +75,7 @@ const Navbar = () => {
               <span className="user-name">{user.name?.split(' ')[0]}</span>
               {/* Role badge */}
               <span className={`role-chip role-${user.role}`}>
-                {user.role === 'admin' ? <i className="fa-solid fa-shield" aria-hidden></i>
+                {user.role === 'admin' ? <i className="fa-solid fa-shield-halved" aria-hidden></i>
                   : user.role === 'company' ? <i className="fa-solid fa-building" aria-hidden></i>
                   : <i className="fa-solid fa-user-graduate" aria-hidden></i>}
               </span>
@@ -122,7 +122,7 @@ const Navbar = () => {
                   {/* Admin-only dropdown items */}
                   {user.role === 'admin' && (
                     <Link to="/admin/dashboard" onClick={() => setDropdownOpen(false)}>
-                      <i className="fa-solid fa-shield" aria-hidden></i> Admin Dashboard
+                      <i className="fa-solid fa-shield-halved" aria-hidden></i> Admin Dashboard
                     </Link>
                   )}
 

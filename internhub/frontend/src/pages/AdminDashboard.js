@@ -127,6 +127,32 @@ const AdminDashboard = () => {
     } catch { toast.error('Failed'); }
   };
 
+  const formatStipend = (stip) => {
+    if (!stip) return '—';
+    if (typeof stip === 'string') return stip;
+    if (stip?.type === 'unpaid') return 'Unpaid';
+    const amount = stip?.amount;
+    const currency = stip?.currency;
+    if (amount != null && !Number.isNaN(Number(amount))) {
+      const num = Number(amount);
+      const formatted = num.toLocaleString('en-IN');
+      const symbol = currency === 'INR' ? '₹' : (currency ? currency + ' ' : '');
+      return `${symbol}${formatted}/month`;
+    }
+    return 'Stipend N/A';
+  };
+
+  const formatDeadline = (internObj) => {
+    if (!internObj) return '—';
+    const d = internObj.applicationDeadline || internObj.deadline || internObj.application_deadline || internObj.closingDate;
+    if (!d) return '—';
+    try {
+      return format(new Date(d), 'MMM dd, yyyy');
+    } catch (e) {
+      return '—';
+    }
+  };
+
   if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
   const statCards = stats ? [
@@ -137,7 +163,7 @@ const AdminDashboard = () => {
     { label: 'Total Users', value: users.length, icon: <i className="fa-solid fa-users" aria-hidden></i>, color: 'primary' },
     { label: 'Students', value: users.filter(u => u.role === 'student').length, icon: <i className="fa-solid fa-user-graduate" aria-hidden></i>, color: 'success' },
     { label: 'Companies', value: users.filter(u => u.role === 'company').length, icon: <i className="fa-solid fa-building" aria-hidden></i>, color: 'accent' },
-    { label: 'Admins', value: users.filter(u => u.role === 'admin').length, icon: <i className="fa-solid fa-shield" aria-hidden></i>, color: 'warning' },
+    { label: 'Admins', value: users.filter(u => u.role === 'admin').length, icon: <i className="fa-solid fa-shield-halved" aria-hidden></i>, color: 'warning' },
   ] : [];
 
   const STATUS_OPTS = ['pending', 'reviewed', 'shortlisted', 'interview', 'selected', 'rejected'];
@@ -150,7 +176,7 @@ const AdminDashboard = () => {
         <div className="container">
               <div className="admin-header-inner">
             <div>
-              <h1><i className="fa-solid fa-shield" aria-hidden></i> Admin Dashboard</h1>
+              <h1><i className="fa-solid fa-shield-halved" aria-hidden></i> Admin Dashboard</h1>
               <p>Full platform control — manage internships, users & applications</p>
             </div>
           </div>
@@ -224,7 +250,7 @@ const AdminDashboard = () => {
                       <small>{u.email}</small>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <span className={`badge badge-${u.role === 'admin' ? 'warning' : u.role === 'company' ? 'primary' : 'success'}`}>{u.role === 'admin' ? <i className="fa-solid fa-shield" aria-hidden></i> : u.role === 'company' ? <i className="fa-solid fa-building" aria-hidden></i> : <i className="fa-solid fa-user-graduate" aria-hidden></i>} {u.role}</span>
+                      <span className={`badge badge-${u.role === 'admin' ? 'warning' : u.role === 'company' ? 'primary' : 'success'}`}>{u.role === 'admin' ? <i className="fa-solid fa-shield-halved" aria-hidden></i> : u.role === 'company' ? <i className="fa-solid fa-building" aria-hidden></i> : <i className="fa-solid fa-user-graduate" aria-hidden></i>} {u.role}</span>
                       <button className="admin-danger-btn" onClick={() => deleteUser(u._id, u.name)}><i className="fa-solid fa-trash" aria-hidden></i></button>
                     </div>
                   </div>
@@ -271,8 +297,8 @@ const AdminDashboard = () => {
                         <div className="td-primary">{intern.location}</div>
                         <div className="td-secondary"><span className="badge badge-gray">{intern.type}</span></div>
                       </td>
-                      <td>{intern.stipend || '—'}</td>
-                      <td style={{ fontSize: '13px' }}>{intern.deadline ? format(new Date(intern.deadline), 'MMM dd, yyyy') : '—'}</td>
+                      <td>{formatStipend(intern.stipend)}</td>
+                      <td style={{ fontSize: '13px' }}>{formatDeadline(intern)}</td>
                       <td><strong>{intern.applicationsCount || 0}</strong></td>
                       <td>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -292,7 +318,7 @@ const AdminDashboard = () => {
                             {intern.isActive ? <i className="fa-solid fa-toggle-on" aria-hidden></i> : <i className="fa-solid fa-toggle-off" aria-hidden></i>}
                           </button>
                           <button
-                            className={`admin-action-btn ${intern.isFeatured ? 'unfeature' : 'feature'}`}
+                            className={`admin-action-btn ${intern.isFeatured ? 'feature' : 'unfeature'}`}
                             onClick={() => toggleFeatured(intern._id)}
                             title={intern.isFeatured ? 'Remove Featured' : 'Mark Featured'}
                           >
@@ -359,7 +385,7 @@ const AdminDashboard = () => {
                       <td style={{ fontSize: '13px', color: 'var(--gray)' }}>{u.email}</td>
                       <td>
                         <span className={`badge badge-${u.role === 'admin' ? 'warning' : u.role === 'company' ? 'primary' : 'success'}`}>
-                          {u.role === 'admin' ? <i className="fa-solid fa-shield" style={{ marginRight: 6 }}></i> : u.role === 'company' ? <i className="fa-solid fa-building" style={{ marginRight: 6 }}></i> : <i className="fa-solid fa-user-graduate" style={{ marginRight: 6 }}></i>} {u.role}
+                          {u.role === 'admin' ? <i className="fa-solid fa-shield-halved" style={{ marginRight: 6}}></i> : u.role === 'company' ? <i className="fa-solid fa-building" style={{ marginRight: 6 }}></i> : <i className="fa-solid fa-user-graduate" style={{ marginRight: 6 }}></i>} {u.role}
                         </span>
                       </td>
                       <td style={{ fontSize: '13px' }}>{format(new Date(u.createdAt), 'MMM dd, yyyy')}</td>
