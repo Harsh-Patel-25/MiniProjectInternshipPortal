@@ -79,6 +79,12 @@ const Internships = () => {
     setLoading(true);
     try {
       const queryParams = { ...filters, limit: 9 };
+      // If user typed "remote" into the location field, treat it as a type filter
+      const loc = (queryParams.location || '').toString().trim().toLowerCase();
+      if (loc === 'remote' || loc.includes('remote') || loc.includes('work from home') || loc === 'wfh') {
+        queryParams.type = 'remote';
+        delete queryParams.location;
+      }
       if (queryParams.category === 'all') delete queryParams.category;
       if (queryParams.type === 'all') delete queryParams.type;
       const res = await internshipAPI.getAll(queryParams);
