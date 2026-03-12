@@ -86,7 +86,7 @@ const Home = () => {
           <div className="hero-dots"></div>
         </div>
         <div className="container hero-content">
-          <div className="hero-badge"> <span><i className="fa-solid fa-rocket" style={{ marginRight: 8, color: '#EF4444' }}></i> India's #1 Internship Platform</span></div>
+          <div className="hero-badge"> <span><span aria-hidden="true" style={{ marginRight: 8, color: '#EF4444', fontSize: 18 }}>🚀</span> India's #1 Internship Platform</span></div>
           <h1>Find Your Dream<br /><span className="gradient-text">Internship</span> Today</h1>
           <p className="hero-desc">Connect with 5,000+ top companies and discover internship opportunities that match your skills and passion. Launch your career with InternHub.</p>
 
@@ -243,7 +243,7 @@ const Home = () => {
                 <Link to="/internships" className="btn btn-lg cta-outline-btn">Browse Internships</Link>
               </div>
             </div>
-            <div className="cta-image"><i className="fa-solid fa-rocket" style={{ fontSize: 40, color: '#EF4444' }}></i></div>
+            <div className="cta-image">🚀</div>
           </div>
         </div>
       </section>
