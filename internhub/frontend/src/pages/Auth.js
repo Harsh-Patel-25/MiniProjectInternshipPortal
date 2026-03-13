@@ -16,8 +16,15 @@ export const Login = () => {
     try {
       const data = await login(form.email, form.password);
       toast.success(`Welcome back, ${data.user.name}!`);
-      if (data.user.role === 'company') navigate('/company/dashboard');
-      else navigate('/dashboard');
+      
+      // ✅ FIX: Navigate based on role including admin
+      if (data.user.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true }); // replace prevents going back to login
+      } else if (data.user.role === 'company') {
+        navigate('/company/dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
     } finally {
@@ -61,6 +68,7 @@ export const Login = () => {
             <p>Demo accounts:</p>
             <button className="demo-btn" onClick={() => setForm({ email: 'student@demo.com', password: 'demo123' })}><i className="fa-solid fa-user-graduate" aria-hidden></i> Student Demo</button>
             <button className="demo-btn" onClick={() => setForm({ email: 'company@demo.com', password: 'demo123' })}><i className="fa-solid fa-building" aria-hidden></i> Company Demo</button>
+            <button className="demo-btn" onClick={() => setForm({ email: 'admin@internhub.com', password: 'admin123' })}><i className="fa-solid fa-shield" aria-hidden></i> Admin Demo</button>
           </div>
           <p className="auth-switch">Don't have an account? <Link to="/register">Sign up free</Link></p>
         </div>
@@ -78,13 +86,17 @@ export const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) return toast.error('Passwords do not match');
-    if (form.password.length < 6) return toast.error('Password must be at least 6 characters');
     setLoading(true);
     try {
       const data = await register(form.name, form.email, form.password, form.role);
       toast.success(`Welcome to InternHub, ${data.user.name}!`);
-      if (data.user.role === 'company') navigate('/company/dashboard');
-      else navigate('/dashboard');
+      
+      // ✅ FIX: Navigate with replace to prevent back button to register
+      if (data.user.role === 'company') {
+        navigate('/company/dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed');
     } finally {
@@ -95,13 +107,13 @@ export const Register = () => {
   return (
     <div className="auth-page">
       <div className="auth-left">
-          <div className="auth-promo">
-            <Link to="/" className="auth-logo"><i className="fa-solid fa-bullseye" style={{ marginRight: 8 }}></i> <strong>Intern<span>Hub</span></strong></Link>
-          <h2>Start Your Internship Journey</h2>
-          <p>Sign up in seconds and discover thousands of opportunities</p>
+        <div className="auth-promo">
+          <Link to="/" className="auth-logo"><i className="fa-solid fa-bullseye" aria-hidden></i> <strong>Intern<span>Hub</span></strong></Link>
+          <h2>Start Your Career Journey</h2>
+          <p>Join thousands of students and companies on InternHub</p>
           <div className="auth-features">
-            {['Free to join', 'Instant profile creation', 'AI-powered matches', 'One-click applications'].map((f, i) => (
-              <div key={i} className="auth-feature-item"><i className="fa-solid fa-circle-check" style={{ color: '#10B981', marginRight: 8 }}></i> {f}</div>
+            {['Free forever', 'No credit card required', 'Instant approval', 'Trusted by 1000+ companies'].map((f, i) => (
+              <div key={i} className="auth-feature-item"><i className="fa-solid fa-circle-check" style={{ color: '#10B981', marginRight: 8 }} aria-hidden></i> {f}</div>
             ))}
           </div>
         </div>
@@ -109,21 +121,24 @@ export const Register = () => {
       <div className="auth-right">
         <div className="auth-card">
           <h1>Create Account</h1>
-          <p className="auth-subtitle">Join InternHub and find your dream internship</p>
-
-          <div className="role-selector">
-            <button className={`role-btn ${form.role === 'student' ? 'active' : ''}`} onClick={() => setForm({...form, role: 'student'})} type="button">
-              <i className="fa-solid fa-user-graduate" style={{ marginRight: 8 }}></i> I'm a Student
-            </button>
-            <button className={`role-btn ${form.role === 'company' ? 'active' : ''}`} onClick={() => setForm({...form, role: 'company'})} type="button">
-              <i className="fa-solid fa-building" style={{ marginRight: 8 }}></i> I'm a Company
-            </button>
-          </div>
-
+          <p className="auth-subtitle">Join InternHub to find your perfect internship</p>
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
+              <label>I am a...</label>
+              <div className="role-selector">
+                <label className={`role-option ${form.role === 'student' ? 'active' : ''}`}>
+                  <input type="radio" name="role" value="student" checked={form.role === 'student'} onChange={e => setForm({...form, role: e.target.value})} />
+                  <div className="role-card"><i className="fa-solid fa-user-graduate" aria-hidden></i> <span>Student</span></div>
+                </label>
+                <label className={`role-option ${form.role === 'company' ? 'active' : ''}`}>
+                  <input type="radio" name="role" value="company" checked={form.role === 'company'} onChange={e => setForm({...form, role: e.target.value})} />
+                  <div className="role-card"><i className="fa-solid fa-building" aria-hidden></i> <span>Company</span></div>
+                </label>
+              </div>
+            </div>
+            <div className="form-group">
               <label>{form.role === 'company' ? 'Company Name' : 'Full Name'}</label>
-              <input type="text" placeholder={form.role === 'company' ? 'Your company name' : 'Your full name'} value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+              <input type="text" placeholder={form.role === 'company' ? 'Your Company Name' : 'Your Full Name'} value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
             </div>
             <div className="form-group">
               <label>Email Address</label>
@@ -131,11 +146,11 @@ export const Register = () => {
             </div>
             <div className="form-group">
               <label>Password</label>
-              <input type="password" placeholder="Min. 6 characters" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
+              <input type="password" placeholder="Create a password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={6} />
             </div>
             <div className="form-group">
               <label>Confirm Password</label>
-              <input type="password" placeholder="Repeat password" value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})} required />
+              <input type="password" placeholder="Confirm your password" value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})} required />
             </div>
             <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={loading}>
               {loading ? 'Creating account...' : 'Create Account →'}
