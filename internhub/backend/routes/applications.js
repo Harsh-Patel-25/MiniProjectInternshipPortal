@@ -4,6 +4,7 @@ const Application = require('../models/Application');
 const Internship = require('../models/Internship');
 const User = require('../models/User');
 const { auth, isStudentOnly, isCompanyOnly, isAdmin, isCompanyOrAdmin } = require('../middleware/auth');
+const { sendApplicationStatusEmail } = require('../utils/emailService'); // ✅ Import email service
 
 // ─── ADMIN ROUTES (before dynamic routes) ─────────────────────────────────
 
@@ -38,15 +39,34 @@ router.delete('/admin/:id', auth, isAdmin, async (req, res) => {
 });
 
 // PUT /api/applications/admin/:id/status — admin can update any application status
+// ✅ WITH EMAIL NOTIFICATION
 router.put('/admin/:id/status', auth, isAdmin, async (req, res) => {
   try {
     const { status, feedback } = req.body;
-    const application = await Application.findById(req.params.id);
+    const application = await Application.findById(req.params.id)
+      .populate('studentId', 'name email')
+      .populate('internshipId', 'title company');
+    
     if (!application) return res.status(404).json({ message: 'Application not found' });
+    
+    const oldStatus = application.status;
     application.status = status;
     if (feedback) application.feedback = feedback;
     application.updatedAt = Date.now();
     await application.save();
+
+    // ✅ Send email notification if status changed (excluding 'pending')
+    if (oldStatus !== status && status !== 'pending') {
+      await sendApplicationStatusEmail(
+        application.studentId.email,
+        application.studentId.name,
+        application.internshipId.title,
+        application.internshipId.company,
+        status,
+        feedback || ''
+      );
+    }
+
     res.json({ message: 'Application status updated by admin', application });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -133,10 +153,14 @@ router.get('/internship/:id', auth, isCompanyOnly, async (req, res) => {
 });
 
 // PUT /api/applications/:id/status — company updates status for their internship's applicant
+// ✅ WITH EMAIL NOTIFICATION
 router.put('/:id/status', auth, isCompanyOnly, async (req, res) => {
   try {
     const { status, feedback } = req.body;
-    const application = await Application.findById(req.params.id).populate('internshipId');
+    const application = await Application.findById(req.params.id)
+      .populate('internshipId', 'title company companyId')
+      .populate('studentId', 'name email');
+    
     if (!application) return res.status(404).json({ message: 'Application not found' });
 
     // Ensure the company owns the internship this application belongs to
@@ -144,10 +168,23 @@ router.put('/:id/status', auth, isCompanyOnly, async (req, res) => {
       return res.status(403).json({ message: 'Unauthorized: you do not own this internship' });
     }
 
+    const oldStatus = application.status;
     application.status = status;
     if (feedback) application.feedback = feedback;
     application.updatedAt = Date.now();
     await application.save();
+
+    // ✅ Send email notification if status changed (excluding 'pending')
+    if (oldStatus !== status && status !== 'pending') {
+      await sendApplicationStatusEmail(
+        application.studentId.email,
+        application.studentId.name,
+        application.internshipId.title,
+        application.internshipId.company,
+        status,
+        feedback || ''
+      );
+    }
 
     res.json({ message: 'Application status updated', application });
   } catch (err) {
