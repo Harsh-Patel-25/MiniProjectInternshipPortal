@@ -181,6 +181,53 @@ const sendApplicationStatusEmail = async (studentEmail, studentName, internshipT
   }
 };
 
+// ─── VERIFICATION EMAILS ─────────────────────────────────────────────────
+
+const getVerificationTemplate = (status, companyName, trustBadge = 'none', notes = '') => {
+  const approved = status === 'approved';
+  const color = approved ? '#10B981' : '#EF4444';
+  const title = approved ? 'Your company has been verified on InternHub' : 'Company verification update';
+
+  return `
+  <div style="font-family: Arial, sans-serif; color: #111827;">
+    <h2 style="color: ${color};">${approved ? '🎉 Verified' : 'ℹ️ Verification Update'}</h2>
+    <p>Hi ${companyName},</p>
+    <p>${approved ? 'Congratulations — your company profile has been verified by the InternHub team.' : 'We reviewed your verification request and have provided an update below.'}</p>
+    <div style="margin:16px 0;padding:12px;background:#F9FAFB;border-left:4px solid ${color};">
+      <strong>Trust Badge:</strong> ${trustBadge}
+      ${notes ? `<p style="margin-top:8px;"><strong>Notes:</strong> ${notes}</p>` : ''}
+    </div>
+    <p style="margin-top:16px;">If you have questions, reply to this email or contact support.</p>
+    <p style="color:#6B7280;font-size:13px;margin-top:24px;">— InternHub Team</p>
+  </div>
+  `;
+};
+
+const sendVerificationEmail = async (companyEmail, companyName, status, trustBadge = 'none', notes = '') => {
+  try {
+    const transporter = createTransporter();
+
+    const subject = status === 'approved'
+      ? `🎉 ${companyName} — Your company is verified on InternHub`
+      : `ℹ️ ${companyName} — Verification update`;
+
+    const mailOptions = {
+      from: `"InternHub" <${process.env.EMAIL_USER}>`,
+      to: companyEmail,
+      subject,
+      html: getVerificationTemplate(status, companyName, trustBadge, notes)
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Verification email sent:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Verification email failed:', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
-  sendApplicationStatusEmail
+  sendApplicationStatusEmail,
+  sendVerificationEmail
 };

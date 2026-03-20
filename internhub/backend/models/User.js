@@ -30,6 +30,35 @@ const userSchema = new mongoose.Schema({
   portfolio: { type: String, default: '' },
   savedInternships: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Internship' }],
   isVerified: { type: Boolean, default: false },
+  
+  // ✅ NEW: Company Verification Fields
+  verificationStatus: { 
+    type: String, 
+    enum: ['unverified', 'pending', 'verified', 'rejected'], 
+    default: 'unverified' 
+  },
+  verificationDocuments: [{
+    type: { type: String }, // 'business_license', 'tax_id', 'incorporation_certificate'
+    url: String,
+    uploadedAt: { type: Date, default: Date.now }
+  }],
+  verifiedAt: { type: Date },
+  verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  verificationNotes: { type: String, default: '' },
+  trustScore: { type: Number, default: 0, min: 0, max: 100 }, // 0-100 score
+  trustBadge: { 
+    type: String, 
+    enum: ['none', 'bronze', 'silver', 'gold', 'platinum'], 
+    default: 'none' 
+  },
+  
+  // Company-specific fields
+  companySize: { type: String, default: '' }, // '1-10', '11-50', '51-200', '201-500', '500+'
+  industry: { type: String, default: '' },
+  foundedYear: { type: Number },
+  website: { type: String, default: '' },
+  companyDescription: { type: String, default: '' },
+  
   createdAt: { type: Date, default: Date.now }
 });
 

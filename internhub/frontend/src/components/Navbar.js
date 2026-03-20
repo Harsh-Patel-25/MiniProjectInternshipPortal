@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faShieldAlt,
+  faBuilding,
+  faUserGraduate,
+  faChevronDown,
+  faUser,
+  faClipboard,
+  faChartSimple,
+  faPlus,
+  faRightFromBracket
+} from '@fortawesome/free-solid-svg-icons';
+import { faBookmark } from '@fortawesome/free-regular-svg-icons';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -58,7 +71,7 @@ const Navbar = () => {
           {/* Admin nav — separate from company */}
           {user?.role === 'admin' && (
             <Link to="/admin/dashboard" className={isActive('/admin/dashboard') ? 'active' : ''}>
-              <i className="fa-solid fa-shield-halved" style={{ marginRight: 8 }}></i> Admin Panel
+              <FontAwesomeIcon icon={faShieldAlt} style={{ marginRight: 8, color: '#F59E0B' }} /> Admin Panel
             </Link>
           )}
         </div>
@@ -75,11 +88,11 @@ const Navbar = () => {
               <span className="user-name">{user.name?.split(' ')[0]}</span>
               {/* Role badge */}
               <span className={`role-chip role-${user.role}`}>
-                {user.role === 'admin' ? <i className="fa-solid fa-shield-halved" aria-hidden></i>
-                  : user.role === 'company' ? <i className="fa-solid fa-building" aria-hidden></i>
-                  : <i className="fa-solid fa-user-graduate" aria-hidden></i>}
+                {user.role === 'admin' ? <FontAwesomeIcon icon={faShieldAlt} style={{ color: '#F59E0B' }} aria-hidden />
+                  : user.role === 'company' ? <FontAwesomeIcon icon={faBuilding} style={{ color: '#2563EB' }} aria-hidden />
+                  : <FontAwesomeIcon icon={faUserGraduate} style={{ color: '#10B981' }} aria-hidden />}
               </span>
-              <i className="fa-solid fa-chevron-down" aria-hidden></i>
+              <FontAwesomeIcon icon={faChevronDown} aria-hidden style={{ marginLeft: 8, color: '#6B7280' }} />
 
               {dropdownOpen && (
                 <div className="user-dropdown">
@@ -92,17 +105,17 @@ const Navbar = () => {
                   </div>
 
                   <Link to="/profile" onClick={() => setDropdownOpen(false)}>
-                    <i className="fa-solid fa-user" aria-hidden></i> My Profile
+                    <FontAwesomeIcon icon={faUser} style={{ marginRight: 8 }} /> My Profile
                   </Link>
 
                   {/* Student-only dropdown items */}
                   {user.role === 'student' && (
                     <>
                       <Link to="/my-applications" onClick={() => setDropdownOpen(false)}>
-                        <i className="fa-solid fa-clipboard" aria-hidden></i> My Applications
+                        <FontAwesomeIcon icon={faClipboard} style={{ marginRight: 8 }} /> My Applications
                       </Link>
                       <Link to="/saved" onClick={() => setDropdownOpen(false)}>
-                        <i className="fa-regular fa-bookmark" aria-hidden></i> Saved Internships
+                        <FontAwesomeIcon icon={faBookmark} style={{ marginRight: 8 }} /> Saved Internships
                       </Link>
                     </>
                   )}
@@ -111,10 +124,10 @@ const Navbar = () => {
                   {user.role === 'company' && (
                     <>
                       <Link to="/company/dashboard" onClick={() => setDropdownOpen(false)}>
-                        <i className="fa-solid fa-chart-simple" aria-hidden></i> Company Dashboard
+                        <FontAwesomeIcon icon={faChartSimple} style={{ marginRight: 8 }} /> Company Dashboard
                       </Link>
                       <Link to="/company/post-internship" onClick={() => setDropdownOpen(false)}>
-                        <i className="fa-solid fa-plus" aria-hidden></i> Post Internship
+                        <FontAwesomeIcon icon={faPlus} style={{ marginRight: 8 }} /> Post Internship
                       </Link>
                     </>
                   )}
@@ -122,12 +135,12 @@ const Navbar = () => {
                   {/* Admin-only dropdown items */}
                   {user.role === 'admin' && (
                     <Link to="/admin/dashboard" onClick={() => setDropdownOpen(false)}>
-                      <i className="fa-solid fa-shield-halved" aria-hidden></i> Admin Dashboard
+                      <FontAwesomeIcon icon={faShieldAlt} style={{ marginRight: 8, color: '#F59E0B' }} /> Admin Dashboard
                     </Link>
                   )}
 
                   <button onClick={handleLogout} className="logout-btn">
-                    <i className="fa-solid fa-right-from-bracket" aria-hidden></i> Sign Out
+                    <FontAwesomeIcon icon={faRightFromBracket} style={{ marginRight: 8 }} /> Sign Out
                   </button>
                 </div>
               )}

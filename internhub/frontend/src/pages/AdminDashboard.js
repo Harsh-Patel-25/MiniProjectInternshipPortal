@@ -3,20 +3,49 @@ import api from '../utils/api';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import './AdminDashboard.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faShieldAlt,
+  faUsers,
+  faBuilding,
+  faGraduationCap,
+  faBriefcase,
+  faFileLines,
+  faCheck,
+  faXmark,
+  faChartSimple,
+  faTrash,
+  faStar,
+  faGem,
+  faTrophy,
+  faMedal,
+  faCircle,
+  faChartPie
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
-const TABS = ['overview', 'internships', 'users', 'applications'];
+const TABS = ['overview', 'analytics', 'verification', 'internships', 'users', 'applications'];
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState(null);
+  const [analytics, setAnalytics] = useState(null);
+  const [trends, setTrends] = useState(null);
+  const [verification, setVerification] = useState({ companies: [] });
   const [internships, setInternships] = useState([]);
   const [users, setUsers] = useState([]);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('');
+  const [verificationFilter, setVerificationFilter] = useState('');
 
   useEffect(() => { fetchAll(); }, []);
+  useEffect(() => { if (activeTab === 'analytics') fetchAnalytics(); }, [activeTab]);
+  useEffect(() => { if (activeTab === 'verification') fetchVerification(); }, [activeTab, verificationFilter]);
   useEffect(() => { if (activeTab === 'internships') fetchInternships(); }, [activeTab, search]);
   useEffect(() => { if (activeTab === 'users') fetchUsers(); }, [activeTab, userRoleFilter]);
   useEffect(() => { if (activeTab === 'applications') fetchApplications(); }, [activeTab]);
@@ -37,6 +66,32 @@ const AdminDashboard = () => {
       console.error('Admin fetch error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      const [overviewRes, trendsRes, companiesRes] = await Promise.all([
+        api.get('/analytics/overview'),
+        api.get('/analytics/trends?period=30d'),
+        api.get('/analytics/companies')
+      ]);
+      setAnalytics({
+        ...overviewRes.data,
+        companyStats: companiesRes.data
+      });
+      setTrends(trendsRes.data);
+    } catch (err) {
+      console.error('Analytics fetch error:', err);
+    }
+  };
+
+  const fetchVerification = async () => {
+    try {
+      const res = await api.get(`/verification/all${verificationFilter ? '?status=' + verificationFilter : ''}`);
+      setVerification(res.data);
+    } catch (err) {
+      console.error('Verification fetch error:', err);
     }
   };
 
@@ -61,7 +116,84 @@ const AdminDashboard = () => {
     } catch {}
   };
 
-  // ─── Internship actions ────────────────────────────────────────────────
+  // ─── Verification Actions ──────────────────────────────────────────────
+
+  const verifyCompany = async (companyId, companyName) => {
+    const trustScore = prompt(`Enter trust score (0-100) for ${companyName}:`, '75');
+    if (!trustScore) return;
+
+    const score = parseInt(trustScore);
+    if (isNaN(score) || score < 0 || score > 100) {
+      return toast.error('Invalid trust score. Must be 0-100.');
+    }
+
+    const notes = prompt('Add verification notes (optional):');
+
+    try {
+      await api.post(`/verification/${companyId}/verify`, {
+        trustScore: score,
+        notes
+      });
+      toast.success(`${companyName} verified successfully!`);
+      fetchVerification();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Verification failed');
+    }
+  };
+
+  const rejectVerification = async (companyId, companyName) => {
+    const reason = prompt(`Reason for rejecting ${companyName}:`);
+    if (!reason) return;
+
+    try {
+      await api.post(`/verification/${companyId}/reject`, { reason });
+      toast.success(`${companyName} verification rejected`);
+      fetchVerification();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Rejection failed');
+    }
+  };
+
+  const updateTrustScore = async (companyId, companyName, currentScore) => {
+    const newScore = prompt(`Update trust score for ${companyName}:`, currentScore);
+    if (!newScore) return;
+
+    const score = parseInt(newScore);
+    if (isNaN(score) || score < 0 || score > 100) {
+      return toast.error('Invalid trust score. Must be 0-100.');
+    }
+
+    try {
+      await api.put(`/verification/${companyId}/trust-score`, { trustScore: score });
+      toast.success('Trust score updated');
+      fetchVerification();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Update failed');
+    }
+  };
+
+  const handleCompanyStatusChange = async (company, newStatus) => {
+    if (!newStatus || newStatus === company.verificationStatus) return;
+
+    // Use existing flows for verify/reject since they prompt for extra info
+    if (newStatus === 'verified') {
+      return verifyCompany(company._id, company.name);
+    }
+
+    if (newStatus === 'rejected') {
+      return rejectVerification(company._id, company.name);
+    }
+
+    try {
+      await api.put(`/verification/${company._id}/status`, { status: newStatus });
+      toast.success('Status updated');
+      fetchVerification();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update status');
+    }
+  };
+
+  // ─── Internship Actions ────────────────────────────────────────────────
   const deleteInternship = async (id, title) => {
     if (!window.confirm(`Delete "${title}" and all its applications?`)) return;
     try {
@@ -89,7 +221,7 @@ const AdminDashboard = () => {
     } catch { toast.error('Failed'); }
   };
 
-  // ─── User actions ──────────────────────────────────────────────────────
+  // ─── User Actions ──────────────────────────────────────────────────────
   const deleteUser = async (id, name) => {
     if (!window.confirm(`Delete user "${name}"? This cannot be undone.`)) return;
     try {
@@ -101,15 +233,15 @@ const AdminDashboard = () => {
     }
   };
 
-  const changeRole = async (id, newRole) => {
+  const changeUserRole = async (id, newRole) => {
     try {
       const res = await api.patch(`/users/admin/${id}/role`, { role: newRole });
       setUsers(prev => prev.map(u => u._id === id ? res.data.user : u));
-      toast.success(`Role changed to ${newRole}`);
-    } catch { toast.error('Failed to change role'); }
+      toast.success('Role updated');
+    } catch { toast.error('Failed'); }
   };
 
-  // ─── Application actions ───────────────────────────────────────────────
+  // ─── Application Actions ───────────────────────────────────────────────
   const deleteApplication = async (id) => {
     if (!window.confirm('Delete this application?')) return;
     try {
@@ -119,7 +251,7 @@ const AdminDashboard = () => {
     } catch { toast.error('Failed'); }
   };
 
-  const updateAppStatus = async (id, status) => {
+  const updateApplicationStatus = async (id, status) => {
     try {
       await api.put(`/applications/admin/${id}/status`, { status });
       setApplications(prev => prev.map(a => a._id === id ? { ...a, status } : a));
@@ -127,359 +259,559 @@ const AdminDashboard = () => {
     } catch { toast.error('Failed'); }
   };
 
-  const formatStipend = (stip) => {
-    if (!stip) return '—';
-    if (typeof stip === 'string') return stip;
-    if (stip?.type === 'unpaid') return 'Unpaid';
-    const amount = stip?.amount;
-    const currency = stip?.currency;
-    if (amount != null && !Number.isNaN(Number(amount))) {
-      const num = Number(amount);
-      const formatted = num.toLocaleString('en-IN');
-      const symbol = currency === 'INR' ? '₹' : (currency ? currency + ' ' : '');
-      return `${symbol}${formatted}/month`;
-    }
-    return 'Stipend N/A';
+  // ─── Helper Functions ──────────────────────────────────────────────────
+  const getTrustBadgeColor = (badge) => {
+    const colors = {
+      platinum: '#E5E4E2',
+      gold: '#FFD700',
+      silver: '#C0C0C0',
+      bronze: '#CD7F32',
+      none: '#9CA3AF'
+    };
+    return colors[badge] || colors.none;
   };
 
-  const formatDeadline = (internObj) => {
-    if (!internObj) return '—';
-    const d = internObj.applicationDeadline || internObj.deadline || internObj.application_deadline || internObj.closingDate;
-    if (!d) return '—';
-    try {
-      return format(new Date(d), 'MMM dd, yyyy');
-    } catch (e) {
-      return '—';
-    }
+  const getTrustBadgeIcon = (badge) => {
+    const icons = {
+      platinum: <FontAwesomeIcon icon={faGem} style={{ marginRight: 8, color: getTrustBadgeColor('platinum') }} />,
+      gold: <FontAwesomeIcon icon={faTrophy} style={{ marginRight: 8, color: getTrustBadgeColor('gold') }} />,
+      silver: <FontAwesomeIcon icon={faMedal} style={{ marginRight: 8, color: getTrustBadgeColor('silver') }} />,
+      bronze: <FontAwesomeIcon icon={faStar} style={{ marginRight: 8, color: getTrustBadgeColor('bronze') }} />,
+      none: <FontAwesomeIcon icon={faCircle} style={{ marginRight: 8, color: getTrustBadgeColor('none') }} />
+    };
+    return icons[badge] || icons.none;
   };
 
-  if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
+  const getStatusColor = (status) => {
+    const colors = {
+      verified: '#10B981',
+      pending: '#F59E0B',
+      unverified: '#6B7280',
+      rejected: '#EF4444'
+    };
+    return colors[status] || colors.unverified;
+  };
 
-  const statCards = stats ? [
-    { label: 'Total Internships', value: stats.totalInternships, icon: <i className="fa-solid fa-clipboard-list" aria-hidden></i>, color: 'primary' },
-    { label: 'Active Internships', value: stats.activeInternships, icon: <i className="fa-solid fa-circle-check" aria-hidden></i>, color: 'success' },
-    { label: 'Featured', value: stats.featuredInternships, icon: <i className="fa-solid fa-star" aria-hidden></i>, color: 'warning' },
-    { label: 'Total Applications', value: stats.totalApplications, icon: <i className="fa-solid fa-envelope" aria-hidden></i>, color: 'accent' },
-    { label: 'Total Users', value: users.length, icon: <i className="fa-solid fa-users" aria-hidden></i>, color: 'primary' },
-    { label: 'Students', value: users.filter(u => u.role === 'student').length, icon: <i className="fa-solid fa-user-graduate" aria-hidden></i>, color: 'success' },
-    { label: 'Companies', value: users.filter(u => u.role === 'company').length, icon: <i className="fa-solid fa-building" aria-hidden></i>, color: 'accent' },
-    { label: 'Admins', value: users.filter(u => u.role === 'admin').length, icon: <i className="fa-solid fa-shield-halved" aria-hidden></i>, color: 'warning' },
-  ] : [];
-
-  const STATUS_OPTS = ['pending', 'reviewed', 'shortlisted', 'interview', 'selected', 'rejected'];
-  const STATUS_COLORS = { pending: 'warning', reviewed: 'accent', shortlisted: 'primary', interview: 'secondary', selected: 'success', rejected: 'error' };
+  if (loading) return <div className="admin-loading">Loading admin dashboard...</div>;
 
   return (
-    <div className="admin-page">
-      {/* Header */}
+    <div className="admin-dashboard">
       <div className="admin-header">
-        <div className="container">
-              <div className="admin-header-inner">
-            <div>
-              <h1><i className="fa-solid fa-shield-halved" aria-hidden></i> Admin Dashboard</h1>
-              <p>Full platform control — manage internships, users & applications</p>
+          <h1><FontAwesomeIcon icon={faShieldAlt} style={{ marginRight: 8, color: '#F59E0B' }} /> Admin Dashboard</h1>
+        <p>Manage platform, verify companies, and view analytics</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="admin-tabs">
+        {TABS.map(tab => (
+          <button
+            key={tab}
+            className={`admin-tab ${activeTab === tab ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab === 'overview' && <FontAwesomeIcon icon={faChartPie} style={{ marginRight: 8, color: "#4F46E5" }} /> } 
+              {tab === 'analytics' && <FontAwesomeIcon icon={faChartSimple} style={{ marginRight: 8, color: '#4F46E5' }} />} 
+              {tab === 'verification' && <FontAwesomeIcon icon={faCheck} style={{ marginRight: 8, color: '#10B981' }} />} 
+              {tab === 'internships' && <FontAwesomeIcon icon={faBriefcase} style={{ marginRight: 8, color: '#F59E0B' }} />} 
+              {tab === 'users' && <FontAwesomeIcon icon={faUsers} style={{ marginRight: 8, color: '#06B6D4' }} />} 
+              {tab === 'applications' && <FontAwesomeIcon icon={faFileLines} style={{ marginRight: 8, color: '#7C3AED' }} />}
+            {' '}
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* ═══ OVERVIEW TAB ═══ */}
+      {activeTab === 'overview' && stats && (
+        <div className="admin-overview">
+          <div className="admin-stats-grid">
+            <div className="admin-stat-card">
+              <div className="stat-icon"><FontAwesomeIcon icon={faUsers} style={{ fontSize: 20, color: '#2563EB' }} /></div>
+              <div className="stat-content">
+                <h3>{stats.totalUsers}</h3>
+                <p>Total Users</p>
+              </div>
+            </div>
+            <div className="admin-stat-card">
+              <div className="stat-icon"><FontAwesomeIcon icon={faBuilding} style={{ fontSize: 20, color: '#4B5563' }} /></div>
+              <div className="stat-content">
+                <h3>{stats.totalCompanies}</h3>
+                <p>Companies</p>
+              </div>
+            </div>
+            <div className="admin-stat-card">
+              <div className="stat-icon"><FontAwesomeIcon icon={faGraduationCap} style={{ fontSize: 20, color: '#06B6D4' }} /></div>
+              <div className="stat-content">
+                <h3>{stats.totalStudents}</h3>
+                <p>Students</p>
+              </div>
+            </div>
+            <div className="admin-stat-card">
+              <div className="stat-icon"><FontAwesomeIcon icon={faBriefcase} style={{ fontSize: 20, color: '#F59E0B' }} /></div>
+              <div className="stat-content">
+                <h3>{stats.totalInternships}</h3>
+                <p>Total Internships</p>
+              </div>
+            </div>
+            <div className="admin-stat-card">
+              <div className="stat-icon"><FontAwesomeIcon icon={faFileLines} style={{ fontSize: 20, color: '#7C3AED' }} /></div>
+              <div className="stat-content">
+                <h3>{stats.totalApplications}</h3>
+                <p>Total Applications</p>
+              </div>
+            </div>
+            <div className="admin-stat-card">
+              <div className="stat-icon"><FontAwesomeIcon icon={faCheck} style={{ fontSize: 20, color: '#10B981' }} /></div>
+              <div className="stat-content">
+                <h3>{stats.activeInternships}</h3>
+                <p>Active Internships</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-recent-section">
+            <h3>Recent Internships</h3>
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Company</th>
+                    <th>Applications</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {internships.slice(0, 10).map(internship => (
+                    <tr key={internship._id}>
+                      <td>{internship.title}</td>
+                      <td>{internship.company}</td>
+                      <td>{internship.applicationsCount || 0}</td>
+                      <td>
+                        <span className={`status-badge ${internship.isActive ? 'active' : 'inactive'}`}>
+                          {internship.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="container admin-content">
-        {/* Tabs */}
-        <div className="admin-tabs">
-          {TABS.map(tab => (
-            <button key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => setActiveTab(tab)}>
-              {tab === 'overview' ? <><i className="fa-solid fa-chart-simple" aria-hidden></i> Overview</> :
-               tab === 'internships' ? <><i className="fa-solid fa-clipboard-list" aria-hidden></i> Internships ({internships.length})</> :
-               tab === 'users' ? <><i className="fa-solid fa-users" aria-hidden></i> Users ({users.length})</> :
-               <><i className="fa-solid fa-envelope" aria-hidden></i> Applications ({applications.length})</>}
-            </button>
-          ))}
-        </div>
-
-        {/* ── OVERVIEW ── */}
-        {activeTab === 'overview' && (
-          <div>
-            <div className="admin-stats-grid">
-              {statCards.map((s, i) => (
-                <div key={i} className={`admin-stat-card stat-${s.color}`}>
-                  <span>{s.icon}</span>
-                  <div><strong>{s.value}</strong><small>{s.label}</small></div>
-                </div>
-              ))}
+      {/* ═══ ANALYTICS TAB ═══ */}
+      {activeTab === 'analytics' && analytics && (
+        <div className="admin-analytics">
+          <h2><FontAwesomeIcon icon={faChartSimple} style={{ marginRight: 8, color: '#4F46E5' }} /> Advanced Analytics</h2>
+          
+          {/* Key Metrics */}
+          <div className="analytics-metrics-grid">
+            <div className="metric-card">
+              <h4>Verification Rate</h4>
+              <div className="metric-value">{analytics.verification.verificationRate}%</div>
+              <p className="metric-label">
+                {analytics.verification.verified} of {analytics.overview.totalCompanies} verified
+              </p>
             </div>
+            <div className="metric-card">
+              <h4>Avg Trust Score</h4>
+              <div className="metric-value">{analytics.companyStats.avgTrustScore.toFixed(1)}</div>
+              <p className="metric-label">Out of 100</p>
+            </div>
+            <div className="metric-card">
+              <h4>New Users (30d)</h4>
+              <div className="metric-value">{analytics.growth.newUsers30d}</div>
+              <p className="metric-label">
+                {analytics.growth.newStudents30d} students, {analytics.growth.newCompanies30d} companies
+              </p>
+            </div>
+            <div className="metric-card">
+              <h4>Pending Verification</h4>
+              <div className="metric-value">{analytics.verification.pending}</div>
+              <p className="metric-label">Companies awaiting review</p>
+            </div>
+          </div>
 
-            {stats?.categoryBreakdown?.length > 0 && (
-              <div className="admin-section">
-                <h3>Internships by Category</h3>
-                <div className="category-breakdown">
-                  {stats.categoryBreakdown.map((cat, i) => (
-                    <div key={i} className="cat-row">
-                      <span className="cat-name">{cat._id}</span>
-                      <div className="cat-bar-wrap">
-                        <div className="cat-bar" style={{ width: `${(cat.count / stats.totalInternships) * 100}%` }}></div>
+          {/* Trust Badge Distribution */}
+          <div className="chart-section">
+            <h3>Trust Badge Distribution</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={Object.entries(analytics.trustBadges || {}).map(([badge, count]) => ({
+                    name: badge.charAt(0).toUpperCase() + badge.slice(1),
+                    value: count
+                  }))}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {Object.keys(analytics.trustBadges || {}).map((badge, index) => (
+                    <Cell key={`cell-${index}`} fill={getTrustBadgeColor(badge)} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Application Status Distribution */}
+          <div className="chart-section">
+            <h3>Application Status Distribution</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={Object.entries(analytics.applicationsByStatus || {}).map(([status, count]) => ({
+                status: status.charAt(0).toUpperCase() + status.slice(1),
+                count
+              }))}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="status" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" fill="#3B82F6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Top Companies */}
+          <div className="top-companies-section">
+            <h3>Top Companies by Applications</h3>
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Company</th>
+                    <th>Trust Badge</th>
+                    <th>Internships</th>
+                    <th>Applications</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analytics.topCompanies.map((company, index) => (
+                    <tr key={company._id}>
+                      <td><strong>#{index + 1}</strong></td>
+                      <td>{company.companyName}</td>
+                      <td>
+                        <span className="trust-badge" style={{ background: getTrustBadgeColor(company.trustBadge) }}>
+                          {getTrustBadgeIcon(company.trustBadge)} {company.trustBadge}
+                        </span>
+                      </td>
+                      <td>{company.internshipsCount}</td>
+                      <td>{company.totalApplications}</td>
+                      <td>
+                        <span className="verification-badge" style={{ background: getStatusColor(company.verificationStatus) }}>
+                          {company.verificationStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Industry Distribution */}
+          <div className="chart-section">
+            <h3>Companies by Industry</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={analytics.companyStats.byIndustry}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="_id" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" fill="#10B981" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ VERIFICATION TAB ═══ */}
+      {activeTab === 'verification' && (
+        <div className="admin-verification">
+          <div className="verification-header">
+            <h2><FontAwesomeIcon icon={faCheck} style={{ marginRight: 8, color: '#10B981' }} /> Company Verification</h2>
+            <div className="verification-filters">
+              <select value={verificationFilter} onChange={(e) => setVerificationFilter(e.target.value)}>
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="verified">Verified</option>
+                <option value="unverified">Unverified</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="verification-stats">
+            <div className="verification-stat pending">
+              <h4>Pending</h4>
+              <div className="stat-number">{verification.companies.filter(c => c.verificationStatus === 'pending').length}</div>
+            </div>
+            <div className="verification-stat verified">
+              <h4>Verified</h4>
+              <div className="stat-number">{verification.companies.filter(c => c.verificationStatus === 'verified').length}</div>
+            </div>
+            <div className="verification-stat unverified">
+              <h4>Unverified</h4>
+              <div className="stat-number">{verification.companies.filter(c => c.verificationStatus === 'unverified').length}</div>
+            </div>
+            <div className="verification-stat rejected">
+              <h4>Rejected</h4>
+              <div className="stat-number">{verification.companies.filter(c => c.verificationStatus === 'rejected').length}</div>
+            </div>
+          </div>
+
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Email</th>
+                  <th>Trust Score</th>
+                  <th>Badge</th>
+                  <th>Internships</th>
+                  <th>Applications</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {verification.companies.map(company => (
+                  <tr key={company._id}>
+                    <td>
+                      <strong>{company.name}</strong>
+                      {company.industry && <div className="company-industry">{company.industry}</div>}
+                    </td>
+                    <td>{company.email}</td>
+                    <td>
+                      <div className="trust-score-bar">
+                        <div className="trust-score-fill" style={{ width: `${company.trustScore}%` }}></div>
+                        <span className="trust-score-text">{company.trustScore}/100</span>
                       </div>
-                      <span className="cat-count">{cat.count}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="admin-recent-grid">
-              <div className="admin-section">
-                <h3>Recent Internships</h3>
-                {internships.slice(0, 5).map((intern, i) => (
-                  <div key={i} className="admin-recent-row">
-                    <div>
-                      <strong>{intern.title}</strong>
-                      <small>{intern.company} • {intern.location}</small>
-                    </div>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <span className={`badge badge-${intern.isActive ? 'success' : 'gray'}`}>{intern.isActive ? <><i className="fa-solid fa-circle-check" aria-hidden></i> Active</> : <><i className="fa-solid fa-circle" aria-hidden></i> Inactive</>}</span>
-                      <button className="admin-danger-btn" onClick={() => deleteInternship(intern._id, intern.title)}><i className="fa-solid fa-trash" aria-hidden></i></button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="admin-section">
-                <h3>Recent Users</h3>
-                {users.slice(0, 5).map((u, i) => (
-                  <div key={i} className="admin-recent-row">
-                    <div>
-                      <strong>{u.name}</strong>
-                      <small>{u.email}</small>
-                    </div>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <span className={`badge badge-${u.role === 'admin' ? 'warning' : u.role === 'company' ? 'primary' : 'success'}`}>{u.role === 'admin' ? <i className="fa-solid fa-shield-halved" aria-hidden></i> : u.role === 'company' ? <i className="fa-solid fa-building" aria-hidden></i> : <i className="fa-solid fa-user-graduate" aria-hidden></i>} {u.role}</span>
-                      <button className="admin-danger-btn" onClick={() => deleteUser(u._id, u.name)}><i className="fa-solid fa-trash" aria-hidden></i></button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── INTERNSHIPS ── */}
-        {activeTab === 'internships' && (
-          <div>
-            <div className="admin-toolbar">
-              <input
-                className="admin-search"
-                type="text"
-                placeholder="Search internships..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-              <span className="admin-count">{internships.length} internships</span>
-            </div>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Title & Company</th>
-                    <th>Location / Type</th>
-                    <th>Stipend</th>
-                    <th>Deadline</th>
-                    <th>Apps</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {internships.map((intern, i) => (
-                    <tr key={i}>
-                      <td>
-                        <div className="td-primary">{intern.title}</div>
-                        <div className="td-secondary">{intern.company}</div>
-                      </td>
-                      <td>
-                        <div className="td-primary">{intern.location}</div>
-                        <div className="td-secondary"><span className="badge badge-gray">{intern.type}</span></div>
-                      </td>
-                      <td>{formatStipend(intern.stipend)}</td>
-                      <td style={{ fontSize: '13px' }}>{formatDeadline(intern)}</td>
-                      <td><strong>{intern.applicationsCount || 0}</strong></td>
-                      <td>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          <span className={`badge badge-${intern.isActive ? 'success' : 'gray'}`}>
-                            {intern.isActive ? <><i className="fa-solid fa-circle-check" style={{ marginRight: 6 }}></i> Active</> : <><i className="fa-solid fa-circle" style={{ marginRight: 6 }}></i> Inactive</>}
-                          </span>
-                          {intern.isFeatured && <span className="badge badge-warning"><i className="fa-solid fa-star" style={{ color: '#FBBF24', marginRight: 6 }}></i> Featured</span>}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="action-btns">
-                          <button
-                            className={`admin-action-btn ${intern.isActive ? 'deactivate' : 'activate'}`}
-                            onClick={() => toggleActive(intern._id)}
-                            title={intern.isActive ? 'Deactivate' : 'Activate'}
-                          >
-                            {intern.isActive ? <i className="fa-solid fa-toggle-on" aria-hidden></i> : <i className="fa-solid fa-toggle-off" aria-hidden></i>}
+                    </td>
+                    <td>
+                      <span className="trust-badge" style={{ background: getTrustBadgeColor(company.trustBadge) }}>
+                        {getTrustBadgeIcon(company.trustBadge)} {company.trustBadge}
+                      </span>
+                    </td>
+                    <td>{company.internshipCount || 0}</td>
+                    <td>{company.applicationCount || 0}</td>
+                    <td>
+                      <select
+                        value={company.verificationStatus}
+                        onChange={(e) => handleCompanyStatusChange(company, e.target.value)}
+                        className="status-select"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="verified">Verified</option>
+                        <option value="unverified">Unverified</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        {company.verificationStatus === 'pending' && (
+                          <>
+                            <button className="btn-action verify" onClick={() => verifyCompany(company._id, company.name)} title="Verify Company">
+                              <FontAwesomeIcon icon={faCheck} />
+                            </button>
+                            <button className="btn-action reject" onClick={() => rejectVerification(company._id, company.name)} title="Reject">
+                              <FontAwesomeIcon icon={faXmark} />
+                            </button>
+                          </>
+                        )}
+                        {company.verificationStatus === 'verified' && (
+                          <button className="btn-action edit" onClick={() => updateTrustScore(company._id, company.name, company.trustScore)} title="Update Trust Score">
+                            <FontAwesomeIcon icon={faChartSimple} />
                           </button>
-                          <button
-                            className={`admin-action-btn ${intern.isFeatured ? 'feature' : 'unfeature'}`}
-                            onClick={() => toggleFeatured(intern._id)}
-                            title={intern.isFeatured ? 'Remove Featured' : 'Mark Featured'}
-                          >
-                            <i className="fa-solid fa-star" aria-hidden></i>
+                        )}
+                        {company.verificationStatus === 'unverified' && (
+                          <button className="btn-action verify" onClick={() => verifyCompany(company._id, company.name)} title="Verify Company">
+                            <FontAwesomeIcon icon={faCheck} />
                           </button>
-                          <button
-                            className="admin-action-btn delete"
-                            onClick={() => deleteInternship(intern._id, intern.title)}
-                            title="Delete Internship"
-                          >
-                            <i className="fa-solid fa-trash" aria-hidden></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* ── USERS ── */}
-        {activeTab === 'users' && (
-          <div>
-            <div className="admin-toolbar">
-              <div className="role-filter-btns">
-                {['', 'student', 'company', 'admin'].map(role => (
-                  <button
-                    key={role}
-                    className={`role-filter-btn ${userRoleFilter === role ? 'active' : ''}`}
-                    onClick={() => setUserRoleFilter(role)}
-                  >
-                    {role === '' ? 'All' : role.charAt(0).toUpperCase() + role.slice(1)}
-                    {role === '' && ` (${users.length})`}
-                    {role === 'student' && ` (${users.filter(u=>u.role==='student').length})`}
-                    {role === 'company' && ` (${users.filter(u=>u.role==='company').length})`}
-                    {role === 'admin' && ` (${users.filter(u=>u.role==='admin').length})`}
-                  </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Joined</th>
-                    <th>Change Role</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((u, i) => (
-                    <tr key={i}>
-                      <td>
-                        <div className="user-cell">
-                          <div className="user-initials">{u.name?.charAt(0)}</div>
-                          <strong>{u.name}</strong>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: '13px', color: 'var(--gray)' }}>{u.email}</td>
-                      <td>
-                        <span className={`badge badge-${u.role === 'admin' ? 'warning' : u.role === 'company' ? 'primary' : 'success'}`}>
-                          {u.role === 'admin' ? <i className="fa-solid fa-shield-halved" style={{ marginRight: 6}}></i> : u.role === 'company' ? <i className="fa-solid fa-building" style={{ marginRight: 6 }}></i> : <i className="fa-solid fa-user-graduate" style={{ marginRight: 6 }}></i>} {u.role}
-                        </span>
-                      </td>
-                      <td style={{ fontSize: '13px' }}>{format(new Date(u.createdAt), 'MMM dd, yyyy')}</td>
-                      <td>
-                        <select
-                          className="role-select"
-                          value={u.role}
-                          onChange={e => changeRole(u._id, e.target.value)}
-                        >
-                          <option value="student">Student</option>
-                          <option value="company">Company</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button
-                          className="admin-action-btn delete"
-                          onClick={() => deleteUser(u._id, u.name)}
-                          title="Delete User"
-                        >
-                          <i className="fa-solid fa-trash" aria-hidden></i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* ── APPLICATIONS ── */}
-        {activeTab === 'applications' && (
-          <div>
-            <div className="admin-toolbar">
-              <span className="admin-count">{applications.length} total applications</span>
-            </div>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Student</th>
-                    <th>Internship</th>
-                    <th>Applied On</th>
-                    <th>Status</th>
-                    <th>Change Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {applications.map((app, i) => (
-                    <tr key={i}>
-                      <td>
-                        <div className="td-primary">{app.studentId?.name || 'Unknown'}</div>
-                        <div className="td-secondary">{app.studentId?.email}</div>
-                      </td>
-                      <td>
-                        <div className="td-primary">{app.internshipId?.title || 'N/A'}</div>
-                        <div className="td-secondary">{app.internshipId?.company}</div>
-                      </td>
-                      <td style={{ fontSize: '13px' }}>{format(new Date(app.appliedAt), 'MMM dd, yyyy')}</td>
-                      <td>
-                        <span className={`badge badge-${STATUS_COLORS[app.status] || 'gray'}`}>
-                          {app.status}
-                        </span>
-                      </td>
-                      <td>
-                        <select
-                          className="role-select"
-                          value={app.status}
-                          onChange={e => updateAppStatus(app._id, e.target.value)}
-                        >
-                          {STATUS_OPTS.map(s => (
-                            <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td>
-                        <button
-                          className="admin-action-btn delete"
-                          onClick={() => deleteApplication(app._id)}
-                          title="Delete Application"
-                        >
-                          <i className="fa-solid fa-trash" aria-hidden></i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+      {/* ═══ INTERNSHIPS TAB ═══ (Keep existing) */}
+      {activeTab === 'internships' && (
+        <div className="admin-internships">
+          <div className="admin-section-header">
+            <h2>💼 Manage Internships</h2>
+            <input
+              type="text"
+              placeholder="Search internships..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="admin-search"
+            />
           </div>
-        )}
-      </div>
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Company</th>
+                  <th>Location</th>
+                  <th>Applications</th>
+                  <th>Status</th>
+                  <th>Featured</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {internships.map(internship => (
+                  <tr key={internship._id}>
+                    <td><strong>{internship.title}</strong></td>
+                    <td>{internship.company}</td>
+                    <td>{internship.location}</td>
+                    <td>{internship.applicationsCount || 0}</td>
+                    <td>
+                      <button
+                        className={`status-toggle ${internship.isActive ? 'active' : 'inactive'}`}
+                        onClick={() => toggleActive(internship._id)}
+                      >
+                        {internship.isActive ? 'Active' : 'Inactive'}
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className={`featured-toggle ${internship.isFeatured ? 'featured' : ''}`}
+                        onClick={() => toggleFeatured(internship._id)}
+                      >
+                        <FontAwesomeIcon icon={faStar} style={{ color: internship.isFeatured ? '#FCD34D' : '#9CA3AF' }} />
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="btn-delete"
+                        onClick={() => deleteInternship(internship._id, internship.title)}
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ USERS TAB ═══ (Keep existing) */}
+      {activeTab === 'users' && (
+        <div className="admin-users">
+          <div className="admin-section-header">
+            <h2><FontAwesomeIcon icon={faUsers} style={{ marginRight: 8, color: '#06B6D4' }} /> Manage Users</h2>
+            <select value={userRoleFilter} onChange={(e) => setUserRoleFilter(e.target.value)} className="admin-filter">
+              <option value="">All Roles</option>
+              <option value="student">Students</option>
+              <option value="company">Companies</option>
+              <option value="admin">Admins</option>
+            </select>
+          </div>
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr key={user._id}>
+                    <td><strong>{user.name}</strong></td>
+                    <td>{user.email}</td>
+                    <td>
+                      <select
+                        value={user.role}
+                        onChange={(e) => changeUserRole(user._id, e.target.value)}
+                        className="role-select"
+                      >
+                        <option value="student">Student</option>
+                        <option value="company">Company</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </td>
+                    <td>{format(new Date(user.createdAt), 'MMM d, yyyy')}</td>
+                    <td>
+                      <button className="btn-delete" onClick={() => deleteUser(user._id, user.name)}>
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ APPLICATIONS TAB ═══ (Keep existing) */}
+      {activeTab === 'applications' && (
+        <div className="admin-applications">
+          <h2><FontAwesomeIcon icon={faFileLines} style={{ marginRight: 8, color: '#7C3AED' }} /> Manage Applications</h2>
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Internship</th>
+                  <th>Applied</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {applications.map(app => (
+                  <tr key={app._id}>
+                    <td>{app.studentId?.name || 'Unknown'}</td>
+                    <td>{app.internshipId?.title || 'Unknown'}</td>
+                    <td>{format(new Date(app.appliedAt), 'MMM d, yyyy')}</td>
+                    <td>
+                      <select
+                        value={app.status}
+                        onChange={(e) => updateApplicationStatus(app._id, e.target.value)}
+                        className="status-select"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="reviewed">Reviewed</option>
+                        <option value="shortlisted">Shortlisted</option>
+                        <option value="interview">Interview</option>
+                        <option value="selected">Selected</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button className="btn-delete" onClick={() => deleteApplication(app._id)}>
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
