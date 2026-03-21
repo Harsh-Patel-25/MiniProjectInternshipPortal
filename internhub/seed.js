@@ -95,7 +95,7 @@ const sampleInternships = [
       "SEO",
       "Social Media",
       "Google Ads",
-      "Content Writing",
+      "Content Writing",  
       "Analytics",
     ],
     stipend: { amount: 10000, currency: "INR", type: "paid" },
