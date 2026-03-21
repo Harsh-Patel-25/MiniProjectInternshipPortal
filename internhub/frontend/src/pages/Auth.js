@@ -66,9 +66,11 @@ export const Login = () => {
           <div className="auth-divider"><span>OR</span></div>
           <div className="demo-accounts">
             <p>Demo accounts:</p>
-            <button className="demo-btn" onClick={() => setForm({ email: 'student@demo.com', password: 'demo123' })}><i className="fa-solid fa-user-graduate" aria-hidden></i> Student Demo</button>
-            <button className="demo-btn" onClick={() => setForm({ email: 'company@demo.com', password: 'demo123' })}><i className="fa-solid fa-building" aria-hidden></i> Company Demo</button>
-            <button className="demo-btn" onClick={() => setForm({ email: 'admin@internhub.com', password: 'admin123' })}><i className="fa-solid fa-shield" aria-hidden></i> Admin Demo</button>
+            <button className="demo-btn" onClick={() => setForm({ email: 'student@demo.com', password: 'demo123' })}><i className="fa-solid fa-user-graduate" aria-hidden></i> Student </button>
+            <button className="demo-btn" onClick={() => setForm({ email: 'company@demo.com', password: 'demo123' })}><i className="fa-solid fa-building" aria-hidden></i> Company </button>
+            <button className="demo-btn" onClick={() => setForm({ email: 'admin@internhub.com', password: 'admin123' })}><i className="fa-solid fa-shield" aria-hidden></i> Admin </button>
+            <button className="demo-btn" onClick={() => setForm({ email: 'student2@demo.com', password: 'demo123' })}><i className="fa-solid fa-user-graduate" aria-hidden></i> Student2 </button>
+            <button className="demo-btn" onClick={() => setForm({ email: 'company2@demo.com', password: 'demo123' })}><i className="fa-solid fa-building" aria-hidden></i> Company2 </button>
           </div>
           <p className="auth-switch">Don't have an account? <Link to="/register">Sign up free</Link></p>
         </div>
