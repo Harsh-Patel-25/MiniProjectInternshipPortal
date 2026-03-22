@@ -122,7 +122,18 @@ const InternshipDetail = () => {
                 </div>
                   <div>
                   <h1>{internship.title}</h1>
-                  <p className="detail-company">{internship.company}</p>
+                  <p className="detail-company" style={{ display: 'flex', alignItems: 'center' }}>
+                    {internship.company}
+                    {internship.companyId?.verificationStatus === 'verified' && (
+                      <span style={{ marginLeft: '6px', fontSize: '15px', display: 'flex', alignItems: 'center' }} title={`${(internship.companyId.trustBadge || '').charAt(0).toUpperCase() + (internship.companyId.trustBadge || '').slice(1)} Verified`}>
+                        {internship.companyId.trustBadge === 'platinum' ? <i className="fa-solid fa-gem" style={{ color: '#9CA3AF' }}></i> :
+                         internship.companyId.trustBadge === 'gold' ? <i className="fa-solid fa-trophy" style={{ color: '#F59E0B' }}></i> :
+                         internship.companyId.trustBadge === 'silver' ? <i className="fa-solid fa-medal" style={{ color: '#D1D5DB' }}></i> :
+                         internship.companyId.trustBadge === 'bronze' ? <i className="fa-solid fa-star" style={{ color: '#B45309' }}></i> :
+                         <i className="fa-solid fa-circle-check" style={{ color: '#10B981' }}></i>}
+                      </span>
+                    )}
+                  </p>
                   <div className="detail-location"><i className="fa-solid fa-location-dot" style={{ marginRight: 6, color: 'var(--gray)' }}></i>{internship.location}</div>
                 </div>
               </div>
@@ -283,7 +294,18 @@ const InternshipDetail = () => {
                 <div className="company-info">
                 <div className="company-logo-md">{internship.company?.charAt(0)}</div>
                 <div>
-                  <strong>{internship.company}</strong>
+                  <strong style={{ display: 'flex', alignItems: 'center' }}>
+                    {internship.company}
+                    {internship.companyId?.verificationStatus === 'verified' && (
+                      <span style={{ marginLeft: '6px', fontSize: '14px', display: 'flex', alignItems: 'center' }} title={`${(internship.companyId.trustBadge || '').charAt(0).toUpperCase() + (internship.companyId.trustBadge || '').slice(1)} Verified`}>
+                        {internship.companyId.trustBadge === 'platinum' ? <i className="fa-solid fa-gem" style={{ color: '#9CA3AF' }}></i> :
+                         internship.companyId.trustBadge === 'gold' ? <i className="fa-solid fa-trophy" style={{ color: '#F59E0B' }}></i> :
+                         internship.companyId.trustBadge === 'silver' ? <i className="fa-solid fa-medal" style={{ color: '#D1D5DB' }}></i> :
+                         internship.companyId.trustBadge === 'bronze' ? <i className="fa-solid fa-star" style={{ color: '#B45309' }}></i> :
+                         <i className="fa-solid fa-circle-check" style={{ color: '#10B981' }}></i>}
+                      </span>
+                    )}
+                  </strong>
                   <p><i className="fa-solid fa-location-dot" style={{ marginRight: 6, color: 'var(--gray)' }}></i>{internship.location}</p>
                 </div>
               </div>

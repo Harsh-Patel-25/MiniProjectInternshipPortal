@@ -7,7 +7,13 @@ const { auth, isAdmin } = require('../middleware/auth');
 // @route GET /api/users/profile - Get own profile
 router.get('/profile', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate('savedInternships');
+    const user = await User.findById(req.user._id).populate({
+      path: 'savedInternships',
+      populate: {
+        path: 'companyId',
+        select: 'verificationStatus trustBadge'
+      }
+    });
     res.json({ user });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -53,7 +59,13 @@ router.post('/save-internship/:id', auth, async (req, res) => {
 // @route GET /api/users/saved-internships
 router.get('/saved-internships', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate('savedInternships');
+    const user = await User.findById(req.user._id).populate({
+      path: 'savedInternships',
+      populate: {
+        path: 'companyId',
+        select: 'verificationStatus trustBadge'
+      }
+    });
     res.json({ internships: user.savedInternships });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

@@ -591,15 +591,19 @@ const AdminDashboard = () => {
                     </td>
                     <td>{company.email}</td>
                     <td>
-                      <div className="trust-score-bar">
-                        <div className="trust-score-fill" style={{ width: `${company.trustScore}%` }}></div>
-                        <span className="trust-score-text">{company.trustScore}/100</span>
-                      </div>
+                      {company.verificationStatus === 'verified' && (
+                        <div className="trust-score-bar">
+                          <div className="trust-score-fill" style={{ width: `${company.trustScore}%` }}></div>
+                          <span className="trust-score-text">{company.trustScore}/100</span>
+                        </div>
+                      )}
                     </td>
                     <td>
-                      <span className="trust-badge" style={{ background: getTrustBadgeColor(company.trustBadge) }}>
-                        {getTrustBadgeIcon(company.trustBadge)} {company.trustBadge}
-                      </span>
+                      {company.verificationStatus === 'verified' && (
+                        <span className="trust-badge" style={{ background: getTrustBadgeColor(company.trustBadge) }}>
+                          {getTrustBadgeIcon(company.trustBadge)} {company.trustBadge}
+                        </span>
+                      )}
                     </td>
                     <td>{company.internshipCount || 0}</td>
                     <td>{company.applicationCount || 0}</td>

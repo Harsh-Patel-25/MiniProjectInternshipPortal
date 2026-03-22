@@ -17,7 +17,7 @@ const typeIcons = {
 
 const InternshipCard = ({ internship, showSave, onSave, isSaved }) => {
   const {
-    _id, title, company, companyLogo, location, type, category,
+    _id, title, company, companyId, companyLogo, location, type, category,
     stipend, duration, applicationDeadline, skills, isFeatured, applicationsCount
   } = internship;
 
@@ -50,7 +50,18 @@ const InternshipCard = ({ internship, showSave, onSave, isSaved }) => {
           <h3 className="card-title">
             <Link to={`/internships/${_id}`}>{title}</Link>
           </h3>
-          <p className="company-name">{company}</p>
+          <p className="company-name" style={{ display: 'flex', alignItems: 'center' }}>
+            {company}
+            {companyId?.verificationStatus === 'verified' && (
+              <span style={{ marginLeft: '6px', fontSize: '14px', display: 'flex', alignItems: 'center' }} title={`${(companyId.trustBadge || '').charAt(0).toUpperCase() + (companyId.trustBadge || '').slice(1)} Verified`}>
+                {companyId.trustBadge === 'platinum' ? <i className="fa-solid fa-gem" style={{ color: '#9CA3AF' }}></i> :
+                 companyId.trustBadge === 'gold' ? <i className="fa-solid fa-trophy" style={{ color: '#F59E0B' }}></i> :
+                 companyId.trustBadge === 'silver' ? <i className="fa-solid fa-medal" style={{ color: '#D1D5DB' }}></i> :
+                 companyId.trustBadge === 'bronze' ? <i className="fa-solid fa-star" style={{ color: '#B45309' }}></i> :
+                 <i className="fa-solid fa-circle-check" style={{ color: '#10B981' }}></i>}
+              </span>
+            )}
+          </p>
         </div>
         {showSave && (
           <button className={`save-btn ${isSaved ? 'saved' : ''}`} onClick={() => onSave && onSave(_id)}>

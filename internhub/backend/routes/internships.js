@@ -10,7 +10,9 @@ const { auth, isCompanyOnly, isAdmin, isCompanyOrAdmin } = require('../middlewar
 // GET /api/internships/company/mine  — company sees only their own
 router.get('/company/mine', auth, isCompanyOnly, async (req, res) => {
   try {
-    const internships = await Internship.find({ companyId: req.user._id }).sort({ createdAt: -1 });
+    const internships = await Internship.find({ companyId: req.user._id })
+      .populate('companyId', 'verificationStatus trustBadge')
+      .sort({ createdAt: -1 });
     res.json({ internships });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -21,6 +23,7 @@ router.get('/company/mine', auth, isCompanyOnly, async (req, res) => {
 router.get('/featured', async (req, res) => {
   try {
     const internships = await Internship.find({ isActive: true, isFeatured: true })
+      .populate('companyId', 'verificationStatus trustBadge')
       .sort({ createdAt: -1 }).limit(6);
     res.json({ internships });
   } catch (err) {
@@ -54,6 +57,7 @@ router.get('/admin/all', auth, isAdmin, async (req, res) => {
     const skip = (Number(page) - 1) * Number(limit);
     const total = await Internship.countDocuments(query);
     const internships = await Internship.find(query)
+      .populate('companyId', 'verificationStatus trustBadge')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));
@@ -168,6 +172,7 @@ router.get('/', async (req, res) => {
     const skip = (Number(page) - 1) * Number(limit);
     const total = await Internship.countDocuments(query);
     const internships = await Internship.find(query)
+      .populate('companyId', 'verificationStatus trustBadge')
       .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
       .skip(skip)
       .limit(Number(limit));
@@ -181,7 +186,8 @@ router.get('/', async (req, res) => {
 // GET /api/internships/:id  — dynamic, MUST be last GET
 router.get('/:id', async (req, res) => {
   try {
-    const internship = await Internship.findById(req.params.id);
+    const internship = await Internship.findById(req.params.id)
+      .populate('companyId', 'verificationStatus trustBadge');
     if (!internship) return res.status(404).json({ message: 'Internship not found' });
     internship.views += 1;
     await internship.save();
