@@ -273,11 +273,11 @@ const AdminDashboard = () => {
 
   const getTrustBadgeIcon = (badge) => {
     const icons = {
-      platinum: <FontAwesomeIcon icon={faGem} style={{ marginRight: 8, color: getTrustBadgeColor('platinum') }} />,
-      gold: <FontAwesomeIcon icon={faTrophy} style={{ marginRight: 8, color: getTrustBadgeColor('gold') }} />,
-      silver: <FontAwesomeIcon icon={faMedal} style={{ marginRight: 8, color: getTrustBadgeColor('silver') }} />,
-      bronze: <FontAwesomeIcon icon={faStar} style={{ marginRight: 8, color: getTrustBadgeColor('bronze') }} />,
-      none: <FontAwesomeIcon icon={faCircle} style={{ marginRight: 8, color: getTrustBadgeColor('none') }} />
+      platinum: <FontAwesomeIcon icon={faGem} style={{ marginRight: 8, color: '#1f2937' }} />,
+      gold: <FontAwesomeIcon icon={faTrophy} style={{ marginRight: 8, color: '#1f2937' }} />,
+      silver: <FontAwesomeIcon icon={faMedal} style={{ marginRight: 8, color: '#1f2937' }} />,
+      bronze: <FontAwesomeIcon icon={faStar} style={{ marginRight: 8, color: '#1f2937' }} />,
+      none: <FontAwesomeIcon icon={faCircle} style={{ marginRight: 8, color: '#1f2937' }} />
     };
     return icons[badge] || icons.none;
   };

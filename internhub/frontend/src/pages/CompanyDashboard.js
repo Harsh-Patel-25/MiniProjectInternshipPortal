@@ -25,8 +25,13 @@ const CompanyDashboard = () => {
   const [loadingApps, setLoadingApps] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('internships');
+  const [expandedCoverLetters, setExpandedCoverLetters] = useState({});
 
   useEffect(() => { fetchData(); }, []);
+
+  const toggleCoverLetter = (appId) => {
+    setExpandedCoverLetters(prev => ({ ...prev, [appId]: !prev[appId] }));
+  };
 
   const fetchData = async () => {
     try {
@@ -178,7 +183,23 @@ const CompanyDashboard = () => {
                           {app.studentId.skills.slice(0, 4).map((s, j) => <span key={j} className="skill-tag-sm">{s}</span>)}
                         </div>
                       )}
-                      {app.coverLetter && <p className="cover-letter-preview">"{app.coverLetter.substring(0, 120)}..."</p>}
+                      {app.coverLetter && (
+                        <div className="cover-letter-preview" style={{ marginTop: '10px', fontSize: '14px', color: '#4B5563', lineHeight: '1.5', background: '#F3F4F6', padding: '10px', borderRadius: '6px' }}>
+                          <span style={{ fontStyle: 'italic' }}>
+                            {expandedCoverLetters[app._id] || app.coverLetter.length <= 120
+                              ? `"${app.coverLetter}"`
+                              : `"${app.coverLetter.substring(0, 120)}..."`}
+                          </span>
+                          {app.coverLetter.length > 120 && (
+                            <button
+                              onClick={() => toggleCoverLetter(app._id)}
+                              style={{ display: 'inline-block', marginLeft: '6px', fontSize: '13px', color: '#2563EB', background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontWeight: '600' }}
+                            >
+                              {expandedCoverLetters[app._id] ? 'Show less' : 'Show more'}
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div className="applicant-meta">
                       <span>{format(new Date(app.appliedAt), 'MMM dd, yyyy')}</span>

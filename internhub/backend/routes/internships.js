@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Internship = require('../models/Internship');
 const Application = require('../models/Application');
+const User = require('../models/User');
 const { auth, isCompanyOnly, isAdmin, isCompanyOrAdmin } = require('../middleware/auth');
 
 // ─── Static routes MUST come before /:id ───────────────────────────────────
@@ -70,11 +71,26 @@ router.get('/admin/stats', auth, isAdmin, async (req, res) => {
     const activeInternships = await Internship.countDocuments({ isActive: true });
     const featuredInternships = await Internship.countDocuments({ isFeatured: true });
     const totalApplications = await Application.countDocuments();
+    
+    // Fetch user stats
+    const totalUsers = await User.countDocuments();
+    const totalCompanies = await User.countDocuments({ role: 'company' });
+    const totalStudents = await User.countDocuments({ role: 'student' });
+
     const categoryBreakdown = await Internship.aggregate([
       { $group: { _id: '$category', count: { $sum: 1 } } },
       { $sort: { count: -1 } }
     ]);
-    res.json({ totalInternships, activeInternships, featuredInternships, totalApplications, categoryBreakdown });
+    res.json({ 
+      totalInternships, 
+      activeInternships, 
+      featuredInternships, 
+      totalApplications, 
+      categoryBreakdown,
+      totalUsers,
+      totalCompanies,
+      totalStudents 
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

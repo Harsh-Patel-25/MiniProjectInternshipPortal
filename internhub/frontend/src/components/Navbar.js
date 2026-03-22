@@ -12,7 +12,12 @@ import {
   faClipboard,
   faChartSimple,
   faPlus,
-  faRightFromBracket
+  faRightFromBracket,
+  faStar,
+  faGem,
+  faTrophy,
+  faMedal,
+  faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark } from '@fortawesome/free-regular-svg-icons';
 
@@ -39,6 +44,16 @@ const Navbar = () => {
   };
 
   const isActive = (path) => location.pathname === path;
+
+  const getTrustBadgeIcon = (badge) => {
+    const icons = {
+      platinum: <FontAwesomeIcon icon={faGem} title="Platinum Verified Company" style={{ color: '#8b5cf6' }} />,
+      gold: <FontAwesomeIcon icon={faTrophy} title="Gold Verified Company" style={{ color: '#F59E0B' }} />,
+      silver: <FontAwesomeIcon icon={faMedal} title="Silver Verified Company" style={{ color: '#9CA3AF' }} />,
+      bronze: <FontAwesomeIcon icon={faStar} title="Bronze Verified Company" style={{ color: '#D97706' }} />,
+    };
+    return icons[badge] || <FontAwesomeIcon icon={faCheckCircle} title="Verified Company" style={{ color: '#10B981' }} />;
+  };
 
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
@@ -85,7 +100,14 @@ const Navbar = () => {
                   : <span>{user.name?.charAt(0).toUpperCase()}</span>
                 }
               </div>
-              <span className="user-name">{user.name?.split(' ')[0]}</span>
+              <span className="user-name">
+                {user.name?.split(' ')[0]}
+                {user.role === 'company' && user.verificationStatus === 'verified' && (
+                  <span className="user-verified-badge" style={{ marginLeft: '6px', fontSize: '0.9em' }}>
+                    {getTrustBadgeIcon(user.trustBadge)}
+                  </span>
+                )}
+              </span>
               {/* Role badge */}
               <span className={`role-chip role-${user.role}`}>
                 {user.role === 'admin' ? <FontAwesomeIcon icon={faShieldAlt} style={{ color: '#F59E0B' }} aria-hidden />
@@ -99,9 +121,16 @@ const Navbar = () => {
                   <div className="dropdown-header">
                     <strong>{user.name}</strong>
                     <small>{user.email}</small>
-                    <span className={`role-badge-sm role-${user.role}`}>
-                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                      <span className={`role-badge-sm role-${user.role}`}>
+                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                      </span>
+                      {user.role === 'company' && user.verificationStatus === 'verified' && (
+                        <span className="user-verified-badge" style={{ fontSize: '1.1em' }}>
+                          {getTrustBadgeIcon(user.trustBadge)}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <Link to="/profile" onClick={() => setDropdownOpen(false)}>

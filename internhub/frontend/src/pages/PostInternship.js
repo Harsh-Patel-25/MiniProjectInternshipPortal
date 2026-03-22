@@ -289,7 +289,7 @@ const PostInternship = () => {
           <div className="form-actions">
             <button type="button" className="btn btn-outline btn-lg" onClick={() => navigate('/company/dashboard')}>Cancel</button>
             <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
-              {loading ? 'Posting...' : <><i className="fa-solid fa-rocket" style={{ marginRight: 8, color: '#EF4444' }}></i> Post Internship</>}
+              {loading ? 'Posting...' : <><i className="fa-solid fa-rocket" style={{ marginRight: 8 }}></i> Post Internship</>}
             </button>
           </div>
 

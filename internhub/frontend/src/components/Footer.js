@@ -25,14 +25,14 @@ const Footer = () => (
           <Link to="/saved">Saved Internships</Link>
         </div>
 
-        <div className="footer-col">
+        <div className="footer-col" id='footercomp'>
           <h4>For Companies</h4>
           <Link to="/register">Post Internship</Link>
           <Link to="/company/dashboard">Company Dashboard</Link>
           <Link to="/register">Sign Up Free</Link>
         </div>
 
-        <div className="footer-col">
+        <div className="footer-col" id="footercontactus">
           <h4>Contact Us</h4>
           <p>Email: support@internhub.com</p>
           <p>Phone: +91 12345 67890</p>
@@ -46,7 +46,7 @@ const Footer = () => (
         <div className="footer-links">
           <a href="#">Privacy Policy</a>
           <a href="#">Terms of Service</a>
-          <a href="#">Contact Us</a>
+          <a href="#footercontactus">Contact Us</a>
         </div>
       </div>
     </div>

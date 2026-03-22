@@ -17,7 +17,7 @@ router.get('/profile', auth, async (req, res) => {
 // @route PUT /api/users/profile - Update profile
 router.put('/profile', auth, async (req, res) => {
   try {
-    const allowedFields = ['name', 'bio', 'skills', 'education', 'experience', 'phone', 'location', 'linkedIn', 'github', 'portfolio', 'profilePicture', 'resume'];
+    const allowedFields = ['name', 'bio', 'skills', 'education', 'experience', 'phone', 'location', 'linkedIn', 'github', 'portfolio', 'profilePicture', 'resume', 'companySize', 'industry', 'foundedYear', 'website', 'companyDescription'];
     const updates = {};
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) updates[field] = req.body[field];
