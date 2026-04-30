@@ -7,6 +7,7 @@ import './Auth.css';
 export const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -57,7 +58,12 @@ export const Login = () => {
             </div>
             <div className="form-group">
               <label>Password</label>
-              <input type="password" placeholder="Your password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
+              <div className="password-input-wrapper">
+                <input type={showPassword ? "text" : "password"} placeholder="Your password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
+                <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                  <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} aria-hidden></i>
+                </button>
+              </div>
             </div>
             <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In →'}
@@ -82,6 +88,8 @@ export const Login = () => {
 export const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '', role: 'student' });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -148,11 +156,21 @@ export const Register = () => {
             </div>
             <div className="form-group">
               <label>Password</label>
-              <input type="password" placeholder="Create a password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={6} />
+              <div className="password-input-wrapper">
+                <input type={showPassword ? "text" : "password"} placeholder="Create a password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={6} />
+                <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                  <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} aria-hidden></i>
+                </button>
+              </div>
             </div>
             <div className="form-group">
               <label>Confirm Password</label>
-              <input type="password" placeholder="Confirm your password" value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})} required />
+              <div className="password-input-wrapper">
+                <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm your password" value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})} required />
+                <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                  <i className={`fa-solid ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`} aria-hidden></i>
+                </button>
+              </div>
             </div>
             <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={loading}>
               {loading ? 'Creating account...' : 'Create Account →'}

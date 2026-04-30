@@ -247,6 +247,26 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Brand Marquee */}
+      <section className="brand-marquee-section">
+        <div className="container">
+          <div className="marquee-header">
+            <p>Our students intern at the world's leading companies</p>
+          </div>
+          <div className="brand-marquee-container">
+            <div className="brand-marquee">
+              {['google', 'github', 'meta', 'apple', 'netflix', 'tesla', 'spotify', 'airbnb', 'stripe', 'discord'].map((brand, i) => (
+                <img key={i} src={`https://cdn.simpleicons.org/${brand}`} alt={brand} className="brand-logo" />
+              ))}
+              {/* Duplicate for infinite effect */}
+              {['google', 'github', 'meta', 'apple', 'netflix', 'tesla', 'spotify', 'airbnb', 'stripe', 'discord'].map((brand, i) => (
+                <img key={`dup-${i}`} src={`https://cdn.simpleicons.org/${brand}`} alt={brand} className="brand-logo" aria-hidden="true" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
